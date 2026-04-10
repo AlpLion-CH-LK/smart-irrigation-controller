@@ -144,6 +144,9 @@ class IrrigationEnvironment:
             termination is handled externally.
         """
         command = IrrigationCommand(action=action)
+        # Ensure we have a fresh reading to determine rain state before irrigating.
+        if self._last_reading is None:
+            self.observe()
         is_raining = self._last_reading.is_raining if self._last_reading else False
 
         # Execute the irrigation command.

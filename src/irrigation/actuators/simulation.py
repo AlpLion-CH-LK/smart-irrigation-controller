@@ -6,7 +6,7 @@ behaviour without physical hardware.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 
 from irrigation.actuators.base import ActuatorInterface, IrrigationCommand
@@ -42,8 +42,7 @@ class SimulatedActuator(ActuatorInterface):
         self.soil_sensor = soil_sensor
         self.moisture_per_litre = moisture_per_litre
         self._active: bool = False
-        self.history: list[IrrigationEvent] = field(default_factory=list)  # type: ignore[assignment]
-        self.history = []
+        self.history: list[IrrigationEvent] = []
         self.total_water_used_litres: float = 0.0
 
     def execute(self, command: IrrigationCommand) -> None:

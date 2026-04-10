@@ -127,7 +127,7 @@ class SimulatedWeatherSensor(SensorInterface):
         rain_prob = 0.15 if self.is_rainy_season else 0.03
         if self._rain_active or random.random() < rain_prob:
             is_raining = True
-            rainfall_mm = random.uniform(0.5, 5.0) if not self._rain_active else 0.0
+            rainfall_mm = random.uniform(0.5, 5.0)
         else:
             is_raining = False
             rainfall_mm = 0.0
