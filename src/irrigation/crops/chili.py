@@ -36,7 +36,7 @@ class ChiliProfile(CropProfile):
     def moisture_thresholds(self) -> MoistureThresholds:
         return MoistureThresholds(
             wilting_point=20.0,
-            stress_threshold=40.0,
+            stress_threshold=40.0, # MDA level - 52.5
             optimal_min=50.0,
             optimal_max=75.0,
             field_capacity=85.0,
@@ -49,3 +49,55 @@ class ChiliProfile(CropProfile):
     @property
     def growing_season_days(self) -> int:
         return 150
+    
+    def moisture_thresholds_for_stages(self, stages) -> MoistureThresholds:
+
+        """ Stage-specific thresholds based on FAQ Paper 56. """
+
+        if stages == 0: # Germination (days 0-20)
+            return MoistureThresholds(
+                wilting_point=20.0,
+                stress_threshold=45.0,
+                optimal_min=55.0,
+                optimal_max=70.0,
+                field_capacity=85.0,
+            )
+        
+        if stages == 1:  # Vegetative (days 20-60)
+            return MoistureThresholds(
+                wilting_point=20.0,
+                stress_threshold=45.0,
+                optimal_min=50.0,
+                optimal_max=70.0,
+                field_capacity=85.0,
+            )
+        
+        if stages == 2: # Flowering (days 60-90)
+            return MoistureThresholds(
+                wilting_point=25.0,
+                stress_threshold=55.0,
+                optimal_min=65.0,
+                optimal_max=75.0,
+                field_capacity=85.0,
+            )
+        
+        if stages == 3:  # Fruit development (days 90-120)
+            return MoistureThresholds(
+                wilting_point=25.0,
+                stress_threshold=55.0,
+                optimal_min=60.0,
+                optimal_max=75.0,
+                field_capacity=85.0,
+            )
+        
+        if stages == 4:  # Maturity (days 120-150)
+            return MoistureThresholds(
+                wilting_point=20.0,
+                stress_threshold=35.0,
+                optimal_min=35.0,
+                optimal_max=50.0,
+                field_capacity=85.0,
+            )
+        return self.moisture_thresholds
+    
+    

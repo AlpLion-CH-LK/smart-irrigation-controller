@@ -81,3 +81,25 @@ class CropProfile(ABC):
             soil_moisture_pct: Current volumetric soil moisture (0–100).
         """
         return soil_moisture_pct < self.moisture_thresholds.stress_threshold
+    
+    def moisture_thresholds_for_stages(self, stages: int) -> MoistureThresholds:
+        """
+            Return stage-specific moisture threshold
+
+            -- Override in subclass for stage-aware irrigation --
+            -- Default: returns base thresholds --
+
+            Args:
+                stage: Growth stage index (0=Germination, 1=Vegetation, 2=Flowering, 3=Fruit development, 4=Maturity)
+        """
+        
+        return self.moisture_thresholds
+    
+    def stress_level_for_stages(self, soil_moisture_pct: float, stages: int) -> float:
+        """ Stage-aware stress level calculation """
+        t = self.moisture_thresholds_for_stages(stages)
+        if soil_moisture_pct >= t.optimal_min:
+            return 0.0
+        if soil_moisture_pct <= t.wilting_point:
+            return 1.0
+        return (t.optimal_min - soil_moisture_pct) / (t.optimal_min - t.wilting_point)
