@@ -82,22 +82,34 @@ class CropProfile(ABC):
         """
         return soil_moisture_pct < self.moisture_thresholds.stress_threshold
     
-    def moisture_thresholds_for_stages(self, stages: int) -> MoistureThresholds:
-        """
-            Return stage-specific moisture threshold
+    def stage_for_day(self, day: int) -> int:
+        """Return the growth stage index for a given day since planting.
 
-            -- Override in subclass for stage-aware irrigation --
-            -- Default: returns base thresholds --
+        Default divides the season into 5 equal stages. Override in subclasses
+        for crop-specific stage boundaries.
 
-            Args:
-                stage: Growth stage index (0=Germination, 1=Vegetation, 2=Flowering, 3=Fruit development, 4=Maturity)
+        Args:
+            day: Days since planting (0 to growing_season_days).
         """
-        
+        fraction = day / max(self.growing_season_days, 1)
+        stage = int(fraction * 5)
+        return min(stage, 4)
+
+    def moisture_thresholds_for_stage(self, stage: int) -> MoistureThresholds:
+        """Return stage-specific moisture thresholds.
+
+        Override in subclasses to provide stage-aware thresholds.
+        Default returns base thresholds (ignores stage).
+
+        Args:
+            stage: Growth stage index (0=Germination, 1=Vegetative,
+                2=Flowering, 3=Fruit development, 4=Maturity)
+        """
         return self.moisture_thresholds
-    
-    def stress_level_for_stages(self, soil_moisture_pct: float, stages: int) -> float:
-        """ Stage-aware stress level calculation """
-        t = self.moisture_thresholds_for_stages(stages)
+
+    def stress_level_for_stage(self, soil_moisture_pct: float, stage: int) -> float:
+        """Return a 0-1 stress indicator using stage-specific thresholds."""
+        t = self.moisture_thresholds_for_stage(stage)
         if soil_moisture_pct >= t.optimal_min:
             return 0.0
         if soil_moisture_pct <= t.wilting_point:

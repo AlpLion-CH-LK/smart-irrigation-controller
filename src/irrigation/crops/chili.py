@@ -50,11 +50,23 @@ class ChiliProfile(CropProfile):
     def growing_season_days(self) -> int:
         return 150
     
-    def moisture_thresholds_for_stages(self, stages) -> MoistureThresholds:
+    def stage_for_day(self, day: int) -> int:
+        """Map day since planting to chili growth stage (0-4)."""
+        if day < 20:
+            return 0  # Germination
+        if day < 60:
+            return 1  # Vegetative
+        if day < 90:
+            return 2  # Flowering
+        if day < 120:
+            return 3  # Fruit development
+        return 4      # Maturity
 
-        """ Stage-specific thresholds based on FAQ Paper 56. """
+    def moisture_thresholds_for_stage(self, stage: int) -> MoistureThresholds:
 
-        if stages == 0: # Germination (days 0-20)
+        """ Stage-specific thresholds based on FAO Paper 56. """
+
+        if stage == 0:  # Germination (days 0-20)
             return MoistureThresholds(
                 wilting_point=20.0,
                 stress_threshold=45.0,
@@ -62,8 +74,7 @@ class ChiliProfile(CropProfile):
                 optimal_max=70.0,
                 field_capacity=85.0,
             )
-        
-        if stages == 1:  # Vegetative (days 20-60)
+        if stage == 1:  # Vegetative (days 20-60)
             return MoistureThresholds(
                 wilting_point=20.0,
                 stress_threshold=45.0,
@@ -71,8 +82,7 @@ class ChiliProfile(CropProfile):
                 optimal_max=70.0,
                 field_capacity=85.0,
             )
-        
-        if stages == 2: # Flowering (days 60-90)
+        if stage == 2:  # Flowering (days 60-90)
             return MoistureThresholds(
                 wilting_point=25.0,
                 stress_threshold=55.0,
@@ -80,8 +90,7 @@ class ChiliProfile(CropProfile):
                 optimal_max=75.0,
                 field_capacity=85.0,
             )
-        
-        if stages == 3:  # Fruit development (days 90-120)
+        if stage == 3:  # Fruit development (days 90-120)
             return MoistureThresholds(
                 wilting_point=25.0,
                 stress_threshold=55.0,
@@ -89,8 +98,7 @@ class ChiliProfile(CropProfile):
                 optimal_max=75.0,
                 field_capacity=85.0,
             )
-        
-        if stages == 4:  # Maturity (days 120-150)
+        if stage == 4:  # Maturity (days 120-150)
             return MoistureThresholds(
                 wilting_point=20.0,
                 stress_threshold=35.0,

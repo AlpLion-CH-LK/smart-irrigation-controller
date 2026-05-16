@@ -1,29 +1,40 @@
 """Simulated sensor implementations for testing and development.
 
 These classes reproduce realistic sensor behaviour without requiring physical
-hardware, making it possible to develop and test the RL agent on any machine.
+hardware, making it possible to train the RL agent at full speed on any machine.
+
+All sensors are step-based: each call to read() advances the simulation by a
+fixed step_hours interval (default 0.5 h = 30 minutes) rather than using the
+real wall clock. This allows training to run thousands of steps per second
+while still simulating realistic soil dynamics.
+
+Typical usage:
+    soil = SimulatedSoilMoistureSensor(initial_moisture_pct=60.0)
+    weather = SimulatedWeatherSensor()
+    sensor = CombinedSimulatedSensor(soil, weather)
+    env = IrrigationEnvironment(sensor, actuator, crop)
 """
 
 from __future__ import annotations
 
 import math
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from irrigation.sensors.base import SensorInterface, SensorReading
 
 
-class SimulatedSoilMoistureSensor(SensorInterface):
-    """Soil moisture sensor backed by a simple water-balance simulation.
+class SimulatedSoilMoistureSensor:
+    """Soil moisture sensor backed by a step-based water-balance simulation.
 
-    The model tracks a soil moisture percentage that:
-    - Decreases over time due to evapotranspiration (ET).
-    - Increases when ``irrigate()`` is called.
-    - Increases when ``apply_rain()`` is called.
+    Each call to read() advances the simulation by exactly step_hours,
+    applying evapotranspiration independently of real elapsed time.
 
     Args:
         initial_moisture_pct: Starting soil moisture (0–100 %).
-        et_rate_per_hour: Evapotranspiration rate in % per hour.
+        et_rate_per_hour: Evapotranspiration rate in % per simulated hour.
+        step_hours: Simulated time per step in hours (default 0.5 = 30 min).
+        initial_hour: Starting hour of day for the simulated clock (0–24).
         seed: Optional random seed for reproducibility.
     """
 
@@ -31,24 +42,20 @@ class SimulatedSoilMoistureSensor(SensorInterface):
         self,
         initial_moisture_pct: float = 50.0,
         et_rate_per_hour: float = 2.0,
+        step_hours: float = 0.5,
+        initial_hour: float = 6.0,
         seed: int | None = None,
     ) -> None:
         self._moisture = initial_moisture_pct
         self.et_rate_per_hour = et_rate_per_hour
-        self._last_read: datetime = datetime.now()
+        self.step_hours = step_hours
+        self._simulated_hour = initial_hour
         if seed is not None:
             random.seed(seed)
 
     @property
     def moisture_pct(self) -> float:
         return self._moisture
-
-    def _apply_et(self) -> None:
-        """Apply evapotranspiration since the last reading."""
-        now = datetime.now()
-        elapsed_hours = (now - self._last_read).total_seconds() / 3600.0
-        self._moisture = max(0.0, self._moisture - self.et_rate_per_hour * elapsed_hours)
-        self._last_read = now
 
     def irrigate(self, amount_pct: float) -> None:
         """Add soil moisture as if irrigation were applied.
@@ -59,33 +66,51 @@ class SimulatedSoilMoistureSensor(SensorInterface):
         self._moisture = min(100.0, self._moisture + amount_pct)
 
     def apply_rain(self, rainfall_mm: float) -> None:
-        """Increase moisture as if rain fell.
-
-        A simple heuristic: 1 mm of rain ≈ 0.5 % soil moisture increase.
+        """Increase moisture as if rain fell (1 mm ≈ 0.5 % moisture).
 
         Args:
             rainfall_mm: Rainfall in millimetres.
         """
         self._moisture = min(100.0, self._moisture + rainfall_mm * 0.5)
 
+    def reset(self, initial_moisture_pct: float = 50.0, initial_hour: float = 6.0) -> None:
+        """Reset moisture and simulated clock for a new training episode."""
+        self._moisture = initial_moisture_pct
+        self._simulated_hour = initial_hour
+
     def read(self) -> SensorReading:
-        self._apply_et()
+        # Apply ET for exactly one step.
+        et_loss = self.et_rate_per_hour * self.step_hours
+        self._moisture = max(0.0, self._moisture - et_loss)
+
         noise = random.gauss(0, 0.3)
         noisy_moisture = max(0.0, min(100.0, self._moisture + noise))
+
+        # Build a simulated timestamp from the internal hour counter.
+        base = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        simulated_time = base + timedelta(hours=self._simulated_hour % 24)
+
+        self._simulated_hour += self.step_hours
+
         return SensorReading(
-            timestamp=datetime.now(),
+            timestamp=simulated_time,
             soil_moisture_pct=round(noisy_moisture, 1),
         )
 
 
-class SimulatedWeatherSensor(SensorInterface):
-    """Weather sensor that generates realistic diurnal temperature cycles.
+class SimulatedWeatherSensor:
+    """Weather sensor with a step-based simulated clock.
+
+    Temperature follows a realistic diurnal cycle keyed to the simulated hour,
+    not the real wall clock. Rain is generated stochastically each step.
 
     Args:
         base_temp_celsius: Mean daily temperature.
         temp_amplitude: Half-range of the diurnal temperature swing.
         base_humidity_pct: Mean relative humidity.
         is_rainy_season: Whether to simulate more frequent rainfall.
+        step_hours: Simulated time per step in hours (default 0.5 = 30 min).
+        initial_hour: Starting hour of day for the simulated clock (0–24).
         seed: Optional random seed for reproducibility.
     """
 
@@ -95,35 +120,42 @@ class SimulatedWeatherSensor(SensorInterface):
         temp_amplitude: float = 5.0,
         base_humidity_pct: float = 70.0,
         is_rainy_season: bool = False,
+        step_hours: float = 0.5,
+        initial_hour: float = 6.0,
         seed: int | None = None,
     ) -> None:
         self.base_temp = base_temp_celsius
         self.temp_amplitude = temp_amplitude
         self.base_humidity = base_humidity_pct
         self.is_rainy_season = is_rainy_season
+        self.step_hours = step_hours
+        self._simulated_hour = initial_hour
         if seed is not None:
             random.seed(seed)
         self._rain_active: bool = False
 
     def _temperature_at(self, hour: float) -> float:
-        """Return estimated temperature for the given hour of day (0–24)."""
-        # Peak temperature around 14:00 local time.
+        """Return estimated temperature for the given simulated hour (0–24)."""
+        # Peak temperature around 14:00.
         radians = 2 * math.pi * (hour - 14) / 24
         return self.base_temp + self.temp_amplitude * math.cos(radians)
 
     def set_rain(self, raining: bool) -> None:
-        """Manually set rain state (useful in controlled test scenarios)."""
+        """Manually override rain state (useful in controlled tests)."""
         self._rain_active = raining
 
+    def reset(self, initial_hour: float = 6.0) -> None:
+        """Reset the simulated clock for a new training episode."""
+        self._simulated_hour = initial_hour
+        self._rain_active = False
+
     def read(self) -> SensorReading:
-        now = datetime.now()
-        hour = now.hour + now.minute / 60.0
+        hour = self._simulated_hour % 24
 
         temp = self._temperature_at(hour) + random.gauss(0, 0.5)
         humidity = self.base_humidity + random.gauss(0, 3.0)
         humidity = max(0.0, min(100.0, humidity))
 
-        # Stochastic rain simulation.
         rain_prob = 0.15 if self.is_rainy_season else 0.03
         if self._rain_active or random.random() < rain_prob:
             is_raining = True
@@ -132,10 +164,55 @@ class SimulatedWeatherSensor(SensorInterface):
             is_raining = False
             rainfall_mm = 0.0
 
+        self._simulated_hour += self.step_hours
+
         return SensorReading(
-            timestamp=now,
             temperature_celsius=round(temp, 1),
             humidity_pct=round(humidity, 1),
             is_raining=is_raining,
             rainfall_mm=round(rainfall_mm, 2),
         )
+
+
+class CombinedSimulatedSensor(SensorInterface):
+    """Merges soil moisture and weather sensors into a single SensorReading.
+
+    This is the sensor to pass to IrrigationEnvironment during simulation
+    and training. Both underlying sensors share the same step_hours so that
+    the simulated clocks stay in sync.
+
+    Args:
+        soil_sensor: A SimulatedSoilMoistureSensor instance.
+        weather_sensor: A SimulatedWeatherSensor instance.
+    """
+
+    def __init__(
+        self,
+        soil_sensor: SimulatedSoilMoistureSensor,
+        weather_sensor: SimulatedWeatherSensor,
+    ) -> None:
+        self.soil_sensor = soil_sensor
+        self.weather_sensor = weather_sensor
+
+    def read(self) -> SensorReading:
+        """Read both sensors and merge into one SensorReading."""
+        soil = self.soil_sensor.read()
+        weather = self.weather_sensor.read()
+
+        # Apply any rain to soil moisture.
+        if weather.is_raining and weather.rainfall_mm > 0:
+            self.soil_sensor.apply_rain(weather.rainfall_mm)
+
+        return SensorReading(
+            timestamp=soil.timestamp,
+            soil_moisture_pct=soil.soil_moisture_pct,
+            temperature_celsius=weather.temperature_celsius,
+            humidity_pct=weather.humidity_pct,
+            is_raining=weather.is_raining,
+            rainfall_mm=weather.rainfall_mm,
+        )
+
+    def reset(self, initial_moisture_pct: float = 50.0, initial_hour: float = 6.0) -> None:
+        """Reset both sensors for a new training episode."""
+        self.soil_sensor.reset(initial_moisture_pct, initial_hour)
+        self.weather_sensor.reset(initial_hour)
