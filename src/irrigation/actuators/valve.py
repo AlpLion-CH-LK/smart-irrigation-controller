@@ -13,17 +13,24 @@ logger = logging.getLogger(__name__)
 class ValveActuator(ActuatorInterface):
     """Controls an irrigation valve (and optional pump) via Raspberry Pi GPIO.
 
-    The valve is opened by pulling the GPIO pin HIGH.  An optional separate
-    pump pin is activated at the same time.
+    The valve is opened by pulling the GPIO pin HIGH. Duration is calculated
+    from the requested water volume and the valve's flow rate.
 
     Args:
         valve_pin: GPIO BCM pin number for the solenoid valve relay.
         pump_pin: Optional GPIO BCM pin number for the water pump relay.
+        flow_rate_lpm: Valve flow rate in litres per minute (default 2.0).
     """
 
-    def __init__(self, valve_pin: int = 22, pump_pin: int | None = None) -> None:
+    def __init__(
+        self,
+        valve_pin: int = 22,
+        pump_pin: int | None = None,
+        flow_rate_lpm: float = 2.0,
+    ) -> None:
         self.valve_pin = valve_pin
         self.pump_pin = pump_pin
+        self.flow_rate_lpm = flow_rate_lpm
         self._active: bool = False
         self._gpio: object | None = None
         self._setup_hardware()
@@ -52,15 +59,15 @@ class ValveActuator(ActuatorInterface):
                 logger.error("Failed to set valve state: %s", exc)
 
     def execute(self, command: IrrigationCommand) -> None:
-        duration = command.effective_duration_seconds
-        if duration <= 0:
+        if command.water_litres <= 0.0:
             return
 
+        duration = (command.water_litres / self.flow_rate_lpm) * 60.0
         logger.info(
-            "Starting irrigation: action=%s duration=%ds (%.1f L)",
-            command.action.name,
+            "Starting irrigation: %.1f L over %.0f s (%.1f L/min)",
+            command.water_litres,
             duration,
-            command.water_used_litres,
+            self.flow_rate_lpm,
         )
         self._active = True
         self._set_valve(open=True)

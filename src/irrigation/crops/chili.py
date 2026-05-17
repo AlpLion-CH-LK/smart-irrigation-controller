@@ -11,6 +11,11 @@ from __future__ import annotations
 
 from irrigation.crops.base import CropProfile, MoistureThresholds
 
+# Stage-specific ETc water requirements for a standard 3m² Jaffna chilli bed.
+# Source: Sri Lanka Dept. of Agriculture + FAO Paper 56 ETc calculations.
+# Stage 0-Germination: 1.8mm/day × 2.77m²/plant × 10 plants = ~5.0 L/day
+_STAGE_ETC_LITRES_PER_DAY = [5.0, 8.6, 12.7, 12.2, 10.3]
+
 
 class ChiliProfile(CropProfile):
     """Crop profile for chili peppers (Capsicum annuum / Capsicum frutescens).
@@ -107,5 +112,8 @@ class ChiliProfile(CropProfile):
                 field_capacity=85.0,
             )
         return self.moisture_thresholds
-    
+
+    def optimal_litres_per_day(self, stage: int) -> float:
+        """Stage-specific water requirement for a standard 3m² Jaffna chilli bed."""
+        return _STAGE_ETC_LITRES_PER_DAY[min(stage, 4)]
     

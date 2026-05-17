@@ -22,15 +22,23 @@ def train(
     total_timesteps: int = 500_000,
     n_envs: int = 4,
     output_dir: str = "models",
+    area_m2: float = 3.0,
+    irrigation_type: str = "drip",
 ) -> None:
+    from irrigation.zone_config import ZoneConfig
+    zone = ZoneConfig(area_m2=area_m2, irrigation_type=irrigation_type)
+
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
     print(f"Training PPO for {total_timesteps:,} timesteps with {n_envs} parallel envs.")
+    print(f"Zone: {area_m2}m², {irrigation_type} ({zone.efficiency*100:.0f}% efficiency).")
+    print(f"Max water per event: {zone.max_litres_per_event}L, moisture/litre: {zone.moisture_per_litre:.3f}%")
     print(f"One episode = 150-day chili season ({150 * 48:,} steps at 30 min/step).")
 
-    train_env = make_vec_env(IrrigationGymEnv, n_envs=n_envs)
-    eval_env = make_vec_env(IrrigationGymEnv, n_envs=1)
+    env_kwargs = {"zone": zone}
+    train_env = make_vec_env(IrrigationGymEnv, n_envs=n_envs, env_kwargs=env_kwargs)
+    eval_env = make_vec_env(IrrigationGymEnv, n_envs=1, env_kwargs=env_kwargs)
 
     model = PPO(
         "MlpPolicy",
@@ -71,6 +79,9 @@ if __name__ == "__main__":
     parser.add_argument("--timesteps", type=int, default=500_000)
     parser.add_argument("--n-envs", type=int, default=4)
     parser.add_argument("--output-dir", type=str, default="models")
+    parser.add_argument("--area", type=float, default=3.0, help="Zone area in m²")
+    parser.add_argument("--irrigation-type", type=str, default="drip",
+                        choices=["drip", "sprinkler"])
     args = parser.parse_args()
 
-    train(args.timesteps, args.n_envs, args.output_dir)
+    train(args.timesteps, args.n_envs, args.output_dir, args.area, args.irrigation_type)

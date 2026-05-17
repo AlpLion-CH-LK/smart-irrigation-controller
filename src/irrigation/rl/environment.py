@@ -3,7 +3,7 @@
 The environment wraps the physical (or simulated) sensors and actuators and
 exposes a Gym-like interface that the PPO agent interacts with.
 
-Observation space (7 continuous values, normalized):
+Observation space (7 continuous values, normalized to [0, 1]):
     - Soil moisture      soil_moisture_pct / 100
     - Temperature        temperature_celsius / 40
     - Humidity           humidity_pct / 100
@@ -13,7 +13,7 @@ Observation space (7 continuous values, normalized):
     - Current day        current_day / growing_season_days
 
 Action space:
-    Four discrete actions defined in IrrigationAction.
+    Continuous float in [0, 1] mapped to [0, zone.max_litres_per_event].
 """
 
 from __future__ import annotations
@@ -24,17 +24,13 @@ from datetime import date
 
 import numpy as np
 
-from irrigation.actuators.base import (
-    ActuatorInterface,
-    IrrigationAction,
-    IrrigationCommand,
-)
+from irrigation.actuators.base import ActuatorInterface, IrrigationCommand
 from irrigation.crops.base import CropProfile
 from irrigation.rl.reward import RewardFunction
 from irrigation.sensors.base import SensorInterface, SensorReading
+from irrigation.zone_config import ZoneConfig
 
 logger = logging.getLogger(__name__)
-
 
 
 @dataclass
@@ -84,6 +80,7 @@ class IrrigationEnvironment:
         actuator: Actuator implementation (real or simulated).
         crop: Crop profile providing stage thresholds and season length.
         planting_date: The date the crop was planted. Defaults to today.
+        zone: Zone configuration for water calculations. Defaults to ZoneConfig().
     """
 
     def __init__(
@@ -92,12 +89,14 @@ class IrrigationEnvironment:
         actuator: ActuatorInterface,
         crop: CropProfile,
         planting_date: date | None = None,
+        zone: ZoneConfig | None = None,
     ) -> None:
         self.sensor = sensor
         self.actuator = actuator
         self.crop = crop
         self.planting_date = planting_date or date.today()
-        self.reward_fn = RewardFunction(crop)
+        self.zone = zone or ZoneConfig()
+        self.reward_fn = RewardFunction(crop, self.zone)
         self._last_reading: SensorReading | None = None
         # Set by IrrigationGymEnv during training to override wall-clock day.
         self._sim_day: int | None = None
@@ -129,18 +128,18 @@ class IrrigationEnvironment:
         )
 
     def step(
-        self, action: IrrigationAction
+        self, water_litres: float
     ) -> tuple[IrrigationState, float, bool]:
-        """Execute an action and return (next_state, reward, done).
+        """Execute an irrigation command and return (next_state, reward, done).
 
         Args:
-            action: The action chosen by the agent.
+            water_litres: Volume of water to apply in litres (0.0 = no irrigation).
 
         Returns:
             A three-tuple of (next_state, reward, done). done is always
             False for this continuous-control environment.
         """
-        command = IrrigationCommand(action=action)
+        command = IrrigationCommand(water_litres=max(0.0, water_litres))
         if self._last_reading is None:
             self.observe()
         assert self._last_reading is not None
@@ -158,18 +157,13 @@ class IrrigationEnvironment:
         )
 
         logger.debug(
-            "action=%s moisture=%.1f%% stage=%d reward=%.4f",
-            action.name,
+            "water=%.2fL moisture=%.1f%% stage=%d reward=%.4f",
+            water_litres,
             next_state.soil_moisture_pct,
             next_state.growth_stage,
             reward,
         )
         return next_state, reward, False
-
-    @property
-    def n_actions(self) -> int:
-        """Total number of discrete actions."""
-        return len(IrrigationAction)
 
     @property
     def observation_size(self) -> int:
