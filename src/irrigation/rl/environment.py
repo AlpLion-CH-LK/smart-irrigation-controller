@@ -167,5 +167,7 @@ class IrrigationEnvironment:
 
     @property
     def observation_size(self) -> int:
-        """Number of values in the observation vector fed to the PPO network."""
-        return 7
+        """Number of values in the observation vector fed to the PPO network.
+        7 env values + 1 health_score appended by IrrigationGymEnv = 8 total.
+        """
+        return 8

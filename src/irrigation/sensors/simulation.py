@@ -33,6 +33,8 @@ class SimulatedSoilMoistureSensor:
     Args:
         initial_moisture_pct: Starting soil moisture (0–100 %).
         et_rate_per_hour: Evapotranspiration rate in % per simulated hour.
+            Default 0.083 = 2%/day which matches Jaffna ET₀ ≈ 6mm/day for 3m² zone:
+            ET loss/day = (6mm × 3m²) / 900L soil × 100 = 2%/day → 0.083%/hr
         step_hours: Simulated time per step in hours (default 1.0 = 1 hour).
         initial_hour: Starting hour of day for the simulated clock (0–24).
         seed: Optional random seed for reproducibility.
@@ -41,7 +43,7 @@ class SimulatedSoilMoistureSensor:
     def __init__(
         self,
         initial_moisture_pct: float = 50.0,
-        et_rate_per_hour: float = 2.0,
+        et_rate_per_hour: float = 0.083,
         step_hours: float = 1.0,
         initial_hour: float = 6.0,
         seed: int | None = None,

@@ -30,6 +30,7 @@ from irrigation.actuators.simulation import SimulatedActuator
 from irrigation.crops.base import CropProfile
 from irrigation.crops.chili import ChiliProfile
 from irrigation.rl.environment import IrrigationEnvironment
+from irrigation.rl.health_tracker import PlantHealthTracker
 from irrigation.sensors.simulation import (
     CombinedSimulatedSensor,
     SimulatedSoilMoistureSensor,
@@ -95,9 +96,10 @@ class IrrigationGymEnv(gymnasium.Env):
         # Continuous action: fraction of max irrigation volume.
         self.action_space = spaces.Box(low=0.0, high=1.0, shape=(1,), dtype=np.float32)
 
-        # 7 normalized continuous observation values, all in [0, 1].
+        # 8 normalized continuous observation values, all in [0, 1].
+        # Index 7 = plant health_score (added by PlantHealthTracker)
         self.observation_space = spaces.Box(
-            low=0.0, high=1.0, shape=(7,), dtype=np.float32
+            low=0.0, high=1.0, shape=(8,), dtype=np.float32
         )
 
         self._soil_sensor = SimulatedSoilMoistureSensor(step_hours=step_hours)
@@ -118,6 +120,7 @@ class IrrigationGymEnv(gymnasium.Env):
         )
 
         self._step = 0
+        self._health_tracker = PlantHealthTracker(self.crop)
 
     def _pick_weather_conditions(self) -> dict:
         """Pick random weather conditions based on current training phase."""
@@ -146,12 +149,19 @@ class IrrigationGymEnv(gymnasium.Env):
         self._step = 0
         self._env._sim_day = 0
         self._env._last_reading = None
+        self._health_tracker.reset()
 
         state = self._env.observe()
-        obs = np.clip(
+        obs = self._make_obs(state)
+        return obs, {"phase": self.training_phase, "conditions": conditions}
+
+    def _make_obs(self, state) -> np.ndarray:
+        """Build (8,) observation: 7 env values + plant health_score."""
+        base_obs = np.clip(
             state.to_observation(self.crop.growing_season_days), 0.0, 1.0
         )
-        return obs, {"phase": self.training_phase, "conditions": conditions}
+        health = np.array([self._health_tracker.health_score], dtype=np.float32)
+        return np.concatenate([base_obs, health])
 
     def step(self, action: np.ndarray) -> tuple[np.ndarray, float, bool, bool, dict]:
         # Sync simulated day before the environment observes.
@@ -164,15 +174,28 @@ class IrrigationGymEnv(gymnasium.Env):
         next_state, reward, _ = self._env.step(water_litres)
         self._step += 1
 
-        obs = np.clip(
-            next_state.to_observation(self.crop.growing_season_days), 0.0, 1.0
+        # Update health tracker with this step's data.
+        self._health_tracker.update(
+            moisture_pct=next_state.soil_moisture_pct,
+            stage=next_state.growth_stage,
+            water_litres=water_litres,
         )
+
+        obs = self._make_obs(next_state)
         terminated = self._step >= self._max_steps
+
         info = {
-            "day": next_state.current_day,
-            "stage": next_state.growth_stage,
-            "moisture": next_state.soil_moisture_pct,
+            "day":          next_state.current_day,
+            "stage":        next_state.growth_stage,
+            "moisture":     next_state.soil_moisture_pct,
             "water_litres": water_litres,
-            "phase": self.training_phase,
+            "health_score": self._health_tracker.health_score,
+            "stress_ratio": self._health_tracker.stress_ratio,
+            "phase":        self.training_phase,
         }
+
+        # At episode end add full health summary.
+        if terminated:
+            info.update(self._health_tracker.summary())
+
         return obs, float(reward), terminated, False, info
