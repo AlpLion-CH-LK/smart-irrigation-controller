@@ -29,6 +29,7 @@ from gymnasium import spaces
 from irrigation.actuators.simulation import SimulatedActuator
 from irrigation.crops.base import CropProfile
 from irrigation.crops.chili import ChiliProfile
+from irrigation.rl.dynamic_stage import DynamicStageTracker
 from irrigation.rl.environment import IrrigationEnvironment
 from irrigation.rl.health_tracker import PlantHealthTracker
 from irrigation.sensors.simulation import (
@@ -121,6 +122,7 @@ class IrrigationGymEnv(gymnasium.Env):
 
         self._step = 0
         self._health_tracker = PlantHealthTracker(self.crop)
+        self._stage_tracker = DynamicStageTracker(self.crop)
 
     def _pick_weather_conditions(self) -> dict:
         """Pick random weather conditions based on current training phase."""
@@ -148,8 +150,10 @@ class IrrigationGymEnv(gymnasium.Env):
 
         self._step = 0
         self._env._sim_day = 0
+        self._env._sim_stage = 0
         self._env._last_reading = None
         self._health_tracker.reset()
+        self._stage_tracker.reset()
 
         state = self._env.observe()
         obs = self._make_obs(state)
@@ -164,20 +168,26 @@ class IrrigationGymEnv(gymnasium.Env):
         return np.concatenate([base_obs, health])
 
     def step(self, action: np.ndarray) -> tuple[np.ndarray, float, bool, bool, dict]:
-        # Sync simulated day before the environment observes.
-        self._env._sim_day = self._step // self._steps_per_day
+        # Sync simulated day and dynamic stage before the environment observes.
+        self._env._sim_day   = self._step // self._steps_per_day
+        self._env._sim_stage = self._stage_tracker.current_stage
 
         # Map agent output [0, 1] → [0, max_litres_per_event].
         water_fraction = float(np.clip(action[0], 0.0, 1.0))
-        water_litres = water_fraction * self.zone.max_litres_per_event
+        water_litres   = water_fraction * self.zone.max_litres_per_event
 
         next_state, reward, _ = self._env.step(water_litres)
         self._step += 1
 
-        # Update health tracker with this step's data.
+        # Update dynamic stage tracker — may advance stage this step.
+        stage_advanced = self._stage_tracker.update(
+            moisture_pct=next_state.soil_moisture_pct,
+        )
+
+        # Update health tracker with dynamic stage (not calendar stage).
         self._health_tracker.update(
             moisture_pct=next_state.soil_moisture_pct,
-            stage=next_state.growth_stage,
+            stage=self._stage_tracker.current_stage,
             water_litres=water_litres,
         )
 
@@ -185,17 +195,23 @@ class IrrigationGymEnv(gymnasium.Env):
         terminated = self._step >= self._max_steps
 
         info = {
-            "day":          next_state.current_day,
-            "stage":        next_state.growth_stage,
-            "moisture":     next_state.soil_moisture_pct,
-            "water_litres": water_litres,
-            "health_score": self._health_tracker.health_score,
-            "stress_ratio": self._health_tracker.stress_ratio,
-            "phase":        self.training_phase,
+            "day":              next_state.current_day,
+            "calendar_stage":   next_state.growth_stage,
+            "dynamic_stage":    self._stage_tracker.current_stage,
+            "stage_name":       self._stage_tracker.stage_name,
+            "days_in_stage":    self._stage_tracker.days_in_stage,
+            "stage_advanced":   stage_advanced,
+            "health_ratio":     self._stage_tracker.health_ratio,
+            "moisture":         next_state.soil_moisture_pct,
+            "water_litres":     water_litres,
+            "health_score":     self._health_tracker.health_score,
+            "stress_ratio":     self._health_tracker.stress_ratio,
+            "phase":            self.training_phase,
         }
 
-        # At episode end add full health summary.
+        # At episode end add full summaries from both trackers.
         if terminated:
             info.update(self._health_tracker.summary())
+            info.update(self._stage_tracker.summary())
 
         return obs, float(reward), terminated, False, info

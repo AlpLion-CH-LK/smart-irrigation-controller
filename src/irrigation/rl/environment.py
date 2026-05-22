@@ -100,6 +100,8 @@ class IrrigationEnvironment:
         self._last_reading: SensorReading | None = None
         # Set by IrrigationGymEnv during training to override wall-clock day.
         self._sim_day: int | None = None
+        # Set by IrrigationGymEnv to use dynamic stage instead of calendar stage.
+        self._sim_stage: int | None = None
 
     def _current_day(self) -> int:
         """Days since planting, clamped to the season length."""
@@ -109,7 +111,9 @@ class IrrigationEnvironment:
         return max(0, min(days, self.crop.growing_season_days))
 
     def _growth_stage(self, current_day: int) -> int:
-        """Map a day count to a growth stage index (0-4)."""
+        """Return growth stage — dynamic override if set, else calendar-based."""
+        if self._sim_stage is not None:
+            return self._sim_stage
         return self.crop.stage_for_day(current_day)
 
     def observe(self) -> IrrigationState:
