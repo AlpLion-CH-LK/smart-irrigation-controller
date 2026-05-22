@@ -32,6 +32,7 @@ from irrigation.crops.chili import ChiliProfile
 from irrigation.rl.dynamic_stage import DynamicStageTracker
 from irrigation.rl.environment import IrrigationEnvironment
 from irrigation.rl.health_tracker import PlantHealthTracker
+from irrigation.rl.vitality import PlantVitalityTracker
 from irrigation.sensors.simulation import (
     CombinedSimulatedSensor,
     SimulatedSoilMoistureSensor,
@@ -97,10 +98,11 @@ class IrrigationGymEnv(gymnasium.Env):
         # Continuous action: fraction of max irrigation volume.
         self.action_space = spaces.Box(low=0.0, high=1.0, shape=(1,), dtype=np.float32)
 
-        # 8 normalized continuous observation values, all in [0, 1].
-        # Index 7 = plant health_score (added by PlantHealthTracker)
+        # 9 normalized continuous observation values, all in [0, 1].
+        # Index 7 = plant health_score (PlantHealthTracker)
+        # Index 8 = plant vitality    (PlantVitalityTracker)
         self.observation_space = spaces.Box(
-            low=0.0, high=1.0, shape=(8,), dtype=np.float32
+            low=0.0, high=1.0, shape=(9,), dtype=np.float32
         )
 
         self._soil_sensor = SimulatedSoilMoistureSensor(step_hours=step_hours)
@@ -121,8 +123,9 @@ class IrrigationGymEnv(gymnasium.Env):
         )
 
         self._step = 0
-        self._health_tracker = PlantHealthTracker(self.crop)
-        self._stage_tracker = DynamicStageTracker(self.crop)
+        self._health_tracker   = PlantHealthTracker(self.crop)
+        self._stage_tracker    = DynamicStageTracker(self.crop)
+        self._vitality_tracker = PlantVitalityTracker(self.crop)
 
     def _pick_weather_conditions(self) -> dict:
         """Pick random weather conditions based on current training phase."""
@@ -154,18 +157,23 @@ class IrrigationGymEnv(gymnasium.Env):
         self._env._last_reading = None
         self._health_tracker.reset()
         self._stage_tracker.reset()
+        self._vitality_tracker.reset()
 
         state = self._env.observe()
         obs = self._make_obs(state)
         return obs, {"phase": self.training_phase, "conditions": conditions}
 
     def _make_obs(self, state) -> np.ndarray:
-        """Build (8,) observation: 7 env values + plant health_score."""
+        """Build (9,) observation: 7 env values + health_score + vitality."""
         base_obs = np.clip(
             state.to_observation(self.crop.growing_season_days), 0.0, 1.0
         )
-        health = np.array([self._health_tracker.health_score], dtype=np.float32)
-        return np.concatenate([base_obs, health])
+        extras = np.array(
+            [self._health_tracker.health_score,
+             self._vitality_tracker.vitality],
+            dtype=np.float32,
+        )
+        return np.concatenate([base_obs, extras])
 
     def step(self, action: np.ndarray) -> tuple[np.ndarray, float, bool, bool, dict]:
         # Sync simulated day and dynamic stage before the environment observes.
@@ -179,25 +187,38 @@ class IrrigationGymEnv(gymnasium.Env):
         next_state, reward, _ = self._env.step(water_litres)
         self._step += 1
 
+        current_stage = self._stage_tracker.current_stage
+
         # Update dynamic stage tracker — may advance stage this step.
         stage_advanced = self._stage_tracker.update(
             moisture_pct=next_state.soil_moisture_pct,
         )
 
+        # Update vitality — check plant death using current dynamic stage.
+        self._vitality_tracker.update(
+            moisture_pct=next_state.soil_moisture_pct,
+            stage=current_stage,
+        )
+
         # Update health tracker with dynamic stage (not calendar stage).
         self._health_tracker.update(
             moisture_pct=next_state.soil_moisture_pct,
-            stage=self._stage_tracker.current_stage,
+            stage=current_stage,
             water_litres=water_litres,
         )
 
+        # Apply death penalty and terminate if plant died.
+        plant_dead = self._vitality_tracker.is_dead
+        if plant_dead:
+            reward += self._vitality_tracker.death_penalty
+
         obs = self._make_obs(next_state)
-        terminated = self._step >= self._max_steps
+        terminated = self._step >= self._max_steps or plant_dead
 
         info = {
             "day":              next_state.current_day,
             "calendar_stage":   next_state.growth_stage,
-            "dynamic_stage":    self._stage_tracker.current_stage,
+            "dynamic_stage":    current_stage,
             "stage_name":       self._stage_tracker.stage_name,
             "days_in_stage":    self._stage_tracker.days_in_stage,
             "stage_advanced":   stage_advanced,
@@ -206,12 +227,14 @@ class IrrigationGymEnv(gymnasium.Env):
             "water_litres":     water_litres,
             "health_score":     self._health_tracker.health_score,
             "stress_ratio":     self._health_tracker.stress_ratio,
+            "vitality":         self._vitality_tracker.vitality,
             "phase":            self.training_phase,
         }
 
-        # At episode end add full summaries from both trackers.
+        # At episode end add full summaries from all trackers.
         if terminated:
             info.update(self._health_tracker.summary())
             info.update(self._stage_tracker.summary())
+            info.update(self._vitality_tracker.death_info())
 
         return obs, float(reward), terminated, False, info
