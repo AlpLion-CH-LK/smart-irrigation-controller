@@ -7,10 +7,13 @@ Step size: 1 hour (matches NASA POWER hourly data exactly)
 Episode length: 150 days × 24 steps/day = 3,600 steps per episode
 
 Curriculum Learning Phases:
-    Phase 1 — Favorable months only (Feb–Apr, dry season Jaffna)
-              Hot, dry, predictable. Agent learns basic irrigation skill.
-    Phase 2 — All months randomly (dry + moderate + monsoon)
-              Agent generalises to monsoon and varied conditions.
+    Phase 1 — Dry months only (Feb–Apr, Jaffna dry season)
+              Agent learns basic irrigation skill in predictable conditions.
+    Phase 2 — All months (dry + moderate + Northeast monsoon)
+              Agent generalises to all real Jaffna weather patterns.
+
+Weather source: Real NASA POWER hourly data (2004–2024, Uduvil, Jaffna).
+Each step samples a real historical record matching the current hour of day.
 
 Action space: Box(0, 1, shape=(1,)) — agent outputs a fraction in [0, 1]
               mapped to [0, zone.max_litres_per_event] litres.
@@ -18,8 +21,8 @@ Action space: Box(0, 1, shape=(1,)) — agent outputs a fraction in [0, 1]
 
 from __future__ import annotations
 
-import random
 from datetime import date
+from pathlib import Path
 from typing import Any
 
 import gymnasium
@@ -33,48 +36,30 @@ from irrigation.rl.dynamic_stage import DynamicStageTracker
 from irrigation.rl.environment import IrrigationEnvironment
 from irrigation.rl.health_tracker import PlantHealthTracker
 from irrigation.rl.vitality import PlantVitalityTracker
-from irrigation.sensors.simulation import (
-    CombinedSimulatedSensor,
-    SimulatedSoilMoistureSensor,
-    SimulatedWeatherSensor,
-)
+from irrigation.sensors.historical import HistoricalWeatherSensor
+from irrigation.sensors.simulation import SimulatedSoilMoistureSensor
+from irrigation.weather.weather_data import WeatherDataLoader
 from irrigation.zone_config import ZoneConfig
 
-
-# ---------------------------------------------------------------------------
-# Weather conditions per month group — based on Jaffna climate
-# ---------------------------------------------------------------------------
-
-# Phase 1 — Favorable: Feb, Mar, Apr (dry season)
-# Hot, low humidity, minimal rain → clear reward signal for irrigation
-_PHASE1_CONDITIONS = [
-    {"base_temp": 32.0, "humidity": 65.0, "rainy": False},
-    {"base_temp": 33.0, "humidity": 62.0, "rainy": False},
-    {"base_temp": 31.0, "humidity": 67.0, "rainy": False},
-]
-
-# Phase 2 — All months: dry + moderate + monsoon
-_PHASE2_CONDITIONS = [
-    # Dry months (Feb–Apr)
-    {"base_temp": 32.0, "humidity": 65.0, "rainy": False},
-    {"base_temp": 33.0, "humidity": 62.0, "rainy": False},
-    # Moderate months (May–Sep, Southwest monsoon)
-    {"base_temp": 29.0, "humidity": 75.0, "rainy": False},
-    {"base_temp": 28.0, "humidity": 78.0, "rainy": False},
-    # Monsoon months (Oct–Jan, Northeast monsoon)
-    {"base_temp": 27.0, "humidity": 85.0, "rainy": True},
-    {"base_temp": 26.0, "humidity": 88.0, "rainy": True},
-]
+# Default path to the NASA POWER hourly CSV
+_DEFAULT_CSV = (
+    Path(__file__).parent.parent.parent.parent
+    / "data" / "weather" / "uduvil_per_hour" / "uduvil_hourly_2004_2024.csv"
+)
 
 
 class IrrigationGymEnv(gymnasium.Env):
     """PPO-ready Gymnasium environment for irrigation control.
 
+    Uses real NASA POWER hourly weather data for Uduvil, Jaffna.
+    Real ET₀ drives soil moisture drain rate each step.
+
     Args:
-        crop: Crop profile. Defaults to ChiliProfile.
-        zone: Zone configuration. Defaults to ZoneConfig (3m² drip bed).
-        step_hours: Simulated time per step in hours (default 1.0 = 1 hour).
-        training_phase: Curriculum phase (1=favorable months, 2=all months).
+        crop:            Crop profile. Defaults to ChiliProfile.
+        zone:            Zone configuration. Defaults to ZoneConfig (3m² drip).
+        step_hours:      Simulated time per step (default 1.0 = 1 hour).
+        training_phase:  Curriculum phase (1=dry months, 2=all months).
+        weather_csv:     Path to NASA POWER hourly CSV. Defaults to project data.
     """
 
     metadata = {"render_modes": []}
@@ -85,83 +70,58 @@ class IrrigationGymEnv(gymnasium.Env):
         zone: ZoneConfig | None = None,
         step_hours: float = 1.0,
         training_phase: int = 1,
+        weather_csv: str | Path | None = None,
     ) -> None:
         super().__init__()
 
-        self.crop = crop or ChiliProfile()
-        self.zone = zone or ZoneConfig()
-        self.step_hours = step_hours
+        self.crop           = crop or ChiliProfile()
+        self.zone           = zone or ZoneConfig()
+        self.step_hours     = step_hours
         self.training_phase = training_phase
         self._steps_per_day = int(24 / step_hours)
-        self._max_steps = self.crop.growing_season_days * self._steps_per_day
+        self._max_steps     = self.crop.growing_season_days * self._steps_per_day
 
         # Continuous action: fraction of max irrigation volume.
         self.action_space = spaces.Box(low=0.0, high=1.0, shape=(1,), dtype=np.float32)
 
         # 9 normalized continuous observation values, all in [0, 1].
-        # Index 7 = plant health_score (PlantHealthTracker)
-        # Index 8 = plant vitality    (PlantVitalityTracker)
+        # [moisture, temp, humidity, hour, is_raining, stage, day, health, vitality]
         self.observation_space = spaces.Box(
             low=0.0, high=1.0, shape=(9,), dtype=np.float32
         )
 
+        # Load real NASA POWER weather data
+        csv_path = Path(weather_csv) if weather_csv else _DEFAULT_CSV
+        self._loader = WeatherDataLoader(csv_path)
+
+        # Soil sensor — moisture state is maintained here
         self._soil_sensor = SimulatedSoilMoistureSensor(step_hours=step_hours)
-        self._weather_sensor = SimulatedWeatherSensor(step_hours=step_hours)
-        self._combined_sensor = CombinedSimulatedSensor(
-            self._soil_sensor, self._weather_sensor
+
+        # Historical weather sensor — replaces SimulatedWeatherSensor
+        # Feeds real ET₀ to soil sensor each step
+        self._sensor = HistoricalWeatherSensor(
+            loader=self._loader,
+            soil_sensor=self._soil_sensor,
+            zone=self.zone,
+            training_phase=training_phase,
         )
+
         self._actuator = SimulatedActuator(
             soil_sensor=self._soil_sensor,
             moisture_per_litre=self.zone.moisture_per_litre,
         )
         self._env = IrrigationEnvironment(
-            sensor=self._combined_sensor,
+            sensor=self._sensor,
             actuator=self._actuator,
             crop=self.crop,
             planting_date=date.today(),
             zone=self.zone,
         )
 
-        self._step = 0
+        self._step             = 0
         self._health_tracker   = PlantHealthTracker(self.crop)
         self._stage_tracker    = DynamicStageTracker(self.crop)
         self._vitality_tracker = PlantVitalityTracker(self.crop)
-
-    def _pick_weather_conditions(self) -> dict:
-        """Pick random weather conditions based on current training phase."""
-        if self.training_phase == 1:
-            return random.choice(_PHASE1_CONDITIONS)
-        return random.choice(_PHASE2_CONDITIONS)
-
-    def reset(
-        self,
-        seed: int | None = None,
-        options: dict[str, Any] | None = None,
-    ) -> tuple[np.ndarray, dict]:
-        super().reset(seed=seed)
-
-        # Pick weather conditions for this episode based on curriculum phase.
-        conditions = self._pick_weather_conditions()
-        self._weather_sensor.base_temp      = conditions["base_temp"]
-        self._weather_sensor.base_humidity  = conditions["humidity"]
-        self._weather_sensor.is_rainy_season = conditions["rainy"]
-
-        initial_moisture = float(self.np_random.uniform(40.0, 80.0))
-        self._soil_sensor.reset(initial_moisture_pct=initial_moisture, initial_hour=6.0)
-        self._weather_sensor.reset(initial_hour=6.0)
-        self._actuator.reset()
-
-        self._step = 0
-        self._env._sim_day = 0
-        self._env._sim_stage = 0
-        self._env._last_reading = None
-        self._health_tracker.reset()
-        self._stage_tracker.reset()
-        self._vitality_tracker.reset()
-
-        state = self._env.observe()
-        obs = self._make_obs(state)
-        return obs, {"phase": self.training_phase, "conditions": conditions}
 
     def _make_obs(self, state) -> np.ndarray:
         """Build (9,) observation: 7 env values + health_score + vitality."""
@@ -174,6 +134,33 @@ class IrrigationGymEnv(gymnasium.Env):
             dtype=np.float32,
         )
         return np.concatenate([base_obs, extras])
+
+    def reset(
+        self,
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[np.ndarray, dict]:
+        super().reset(seed=seed)
+
+        # Update curriculum phase in the sensor (controls month filter)
+        self._sensor.set_training_phase(self.training_phase)
+
+        # Randomize initial soil moisture for diverse training scenarios
+        initial_moisture = float(self.np_random.uniform(40.0, 80.0))
+        self._sensor.reset(initial_moisture_pct=initial_moisture, initial_hour=6.0)
+        self._actuator.reset()
+
+        self._step = 0
+        self._env._sim_day   = 0
+        self._env._sim_stage = 0
+        self._env._last_reading = None
+        self._health_tracker.reset()
+        self._stage_tracker.reset()
+        self._vitality_tracker.reset()
+
+        state = self._env.observe()
+        obs   = self._make_obs(state)
+        return obs, {"phase": self.training_phase}
 
     def step(self, action: np.ndarray) -> tuple[np.ndarray, float, bool, bool, dict]:
         # Sync simulated day and dynamic stage before the environment observes.
@@ -200,7 +187,7 @@ class IrrigationGymEnv(gymnasium.Env):
             stage=current_stage,
         )
 
-        # Update health tracker with dynamic stage (not calendar stage).
+        # Update health tracker with dynamic stage.
         self._health_tracker.update(
             moisture_pct=next_state.soil_moisture_pct,
             stage=current_stage,
@@ -212,23 +199,23 @@ class IrrigationGymEnv(gymnasium.Env):
         if plant_dead:
             reward += self._vitality_tracker.death_penalty
 
-        obs = self._make_obs(next_state)
+        obs        = self._make_obs(next_state)
         terminated = self._step >= self._max_steps or plant_dead
 
         info = {
-            "day":              next_state.current_day,
-            "calendar_stage":   next_state.growth_stage,
-            "dynamic_stage":    current_stage,
-            "stage_name":       self._stage_tracker.stage_name,
-            "days_in_stage":    self._stage_tracker.days_in_stage,
-            "stage_advanced":   stage_advanced,
-            "health_ratio":     self._stage_tracker.health_ratio,
-            "moisture":         next_state.soil_moisture_pct,
-            "water_litres":     water_litres,
-            "health_score":     self._health_tracker.health_score,
-            "stress_ratio":     self._health_tracker.stress_ratio,
-            "vitality":         self._vitality_tracker.vitality,
-            "phase":            self.training_phase,
+            "day":            next_state.current_day,
+            "calendar_stage": next_state.growth_stage,
+            "dynamic_stage":  current_stage,
+            "stage_name":     self._stage_tracker.stage_name,
+            "days_in_stage":  self._stage_tracker.days_in_stage,
+            "stage_advanced": stage_advanced,
+            "health_ratio":   self._stage_tracker.health_ratio,
+            "moisture":       next_state.soil_moisture_pct,
+            "water_litres":   water_litres,
+            "health_score":   self._health_tracker.health_score,
+            "stress_ratio":   self._health_tracker.stress_ratio,
+            "vitality":       self._vitality_tracker.vitality,
+            "phase":          self.training_phase,
         }
 
         # At episode end add full summaries from all trackers.
