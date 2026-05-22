@@ -3,6 +3,9 @@
 One episode = one full growing season. The simulated clock advances by
 step_hours on every step, independent of real wall-clock time.
 
+Step size: 1 hour (matches NASA POWER hourly data exactly)
+Episode length: 150 days × 24 steps/day = 3,600 steps per episode
+
 Action space: Box(0, 1, shape=(1,)) — agent outputs a fraction in [0, 1]
               mapped to [0, zone.max_litres_per_event] litres.
 """
@@ -34,7 +37,7 @@ class IrrigationGymEnv(gymnasium.Env):
     Args:
         crop: Crop profile. Defaults to ChiliProfile.
         zone: Zone configuration. Defaults to ZoneConfig (3m² drip bed).
-        step_hours: Simulated time per step in hours (default 0.5 = 30 min).
+        step_hours: Simulated time per step in hours (default 1.0 = 1 hour).
         base_temp_celsius: Mean daily temperature for weather simulation.
         is_rainy_season: Whether to simulate more frequent rainfall.
     """
@@ -45,7 +48,7 @@ class IrrigationGymEnv(gymnasium.Env):
         self,
         crop: CropProfile | None = None,
         zone: ZoneConfig | None = None,
-        step_hours: float = 0.5,
+        step_hours: float = 1.0,
         base_temp_celsius: float = 28.0,
         is_rainy_season: bool = False,
     ) -> None:

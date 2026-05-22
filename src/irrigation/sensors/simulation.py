@@ -4,9 +4,9 @@ These classes reproduce realistic sensor behaviour without requiring physical
 hardware, making it possible to train the RL agent at full speed on any machine.
 
 All sensors are step-based: each call to read() advances the simulation by a
-fixed step_hours interval (default 0.5 h = 30 minutes) rather than using the
-real wall clock. This allows training to run thousands of steps per second
-while still simulating realistic soil dynamics.
+fixed step_hours interval (default 1.0 h = 1 hour) rather than using the
+real wall clock. This matches the NASA POWER hourly data exactly and allows
+training to run thousands of steps per second while simulating realistic dynamics.
 
 Typical usage:
     soil = SimulatedSoilMoistureSensor(initial_moisture_pct=60.0)
@@ -33,7 +33,7 @@ class SimulatedSoilMoistureSensor:
     Args:
         initial_moisture_pct: Starting soil moisture (0–100 %).
         et_rate_per_hour: Evapotranspiration rate in % per simulated hour.
-        step_hours: Simulated time per step in hours (default 0.5 = 30 min).
+        step_hours: Simulated time per step in hours (default 1.0 = 1 hour).
         initial_hour: Starting hour of day for the simulated clock (0–24).
         seed: Optional random seed for reproducibility.
     """
@@ -42,7 +42,7 @@ class SimulatedSoilMoistureSensor:
         self,
         initial_moisture_pct: float = 50.0,
         et_rate_per_hour: float = 2.0,
-        step_hours: float = 0.5,
+        step_hours: float = 1.0,
         initial_hour: float = 6.0,
         seed: int | None = None,
     ) -> None:
@@ -109,7 +109,7 @@ class SimulatedWeatherSensor:
         temp_amplitude: Half-range of the diurnal temperature swing.
         base_humidity_pct: Mean relative humidity.
         is_rainy_season: Whether to simulate more frequent rainfall.
-        step_hours: Simulated time per step in hours (default 0.5 = 30 min).
+        step_hours: Simulated time per step in hours (default 1.0 = 1 hour).
         initial_hour: Starting hour of day for the simulated clock (0–24).
         seed: Optional random seed for reproducibility.
     """
@@ -120,7 +120,7 @@ class SimulatedWeatherSensor:
         temp_amplitude: float = 5.0,
         base_humidity_pct: float = 70.0,
         is_rainy_season: bool = False,
-        step_hours: float = 0.5,
+        step_hours: float = 1.0,
         initial_hour: float = 6.0,
         seed: int | None = None,
     ) -> None:
