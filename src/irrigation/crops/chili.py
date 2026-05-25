@@ -9,12 +9,20 @@ References:
 
 from __future__ import annotations
 
+from irrigation.config_loader import load_config
 from irrigation.crops.base import CropProfile, MoistureThresholds
 
-# Stage-specific ETc water requirements for a standard 3m² Jaffna chilli bed.
+# Stage-specific ETc water requirements — loaded from config.yaml → crop section
 # Source: Sri Lanka Dept. of Agriculture + FAO Paper 56 ETc calculations.
-# Stage 0-Germination: 1.8mm/day × 2.77m²/plant × 10 plants = ~5.0 L/day
-_STAGE_ETC_LITRES_PER_DAY = [5.0, 8.6, 12.7, 12.2, 10.3]
+# To change water requirements: edit config.yaml → crop → etc_litres_per_day
+_etc = load_config()["crop"]["etc_litres_per_day"]
+_STAGE_ETC_LITRES_PER_DAY = [
+    _etc["stage_0"],   # Germination — 1.8 mm/day × 3m² zone
+    _etc["stage_1"],   # Vegetative  — 3.2 mm/day × 3m² zone
+    _etc["stage_2"],   # Flowering   — 4.7 mm/day × 3m² zone (PEAK)
+    _etc["stage_3"],   # Fruit dev   — 4.5 mm/day × 3m² zone
+    _etc["stage_4"],   # Maturity    — 3.8 mm/day × 3m² zone
+]
 
 
 class ChiliProfile(CropProfile):

@@ -10,31 +10,38 @@ A rain bonus is applied when irrigation is correctly withheld during rain.
 
 from __future__ import annotations
 
+from irrigation.config_loader import load_config
 from irrigation.crops.base import CropProfile
 from irrigation.actuators.base import IrrigationCommand
 from irrigation.zone_config import ZoneConfig
+
+# Load reward weights from config.yaml → reward section
+_r = load_config()["reward"]
 
 
 class RewardFunction:
     """Compute scalar rewards for the RL agent.
 
+    Default weights come from config.yaml → reward section.
+    Override by passing explicit values (useful for experiments).
+
     Args:
         crop: The active crop profile providing stage-specific moisture thresholds.
         zone: Zone configuration used to normalise water penalties.
-        water_penalty_weight: Penalty weight for water use (default 0.3).
-        stress_penalty_weight: Penalty weight for plant stress (default 1.0).
-        overwater_penalty: Penalty for exceeding field capacity (default 2.0).
-        rain_bonus: Bonus for skipping irrigation when raining (default 0.5).
+        water_penalty_weight: Penalty weight for water use.
+        stress_penalty_weight: Penalty weight for plant stress.
+        overwater_penalty: Penalty for exceeding field capacity.
+        rain_bonus: Bonus for skipping irrigation when raining.
     """
 
     def __init__(
         self,
         crop: CropProfile,
         zone: ZoneConfig | None = None,
-        water_penalty_weight: float = 0.3,
-        stress_penalty_weight: float = 1.0,
-        overwater_penalty: float = 2.0,
-        rain_bonus: float = 0.5,
+        water_penalty_weight: float = _r["water_penalty_weight"],
+        stress_penalty_weight: float = _r["stress_penalty_weight"],
+        overwater_penalty: float = _r["overwater_penalty"],
+        rain_bonus: float = _r["rain_bonus"],
     ) -> None:
         self.crop = crop
         self.zone = zone or ZoneConfig()

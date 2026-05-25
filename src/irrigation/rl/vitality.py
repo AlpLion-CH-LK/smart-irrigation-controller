@@ -16,11 +16,26 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from irrigation.config_loader import load_config
 from irrigation.crops.base import CropProfile
 
+# Load all vitality parameters from config.yaml → stages section
+_cfg = load_config()
+_s   = _cfg["stages"]     # stage-level config block
+_dp  = _cfg["reward"]["death_penalty"]  # death penalties block
+
+# Map stage index to YAML key name
+_STAGE_KEYS = {
+    0: "germination",
+    1: "vegetative",
+    2: "flowering",
+    3: "fruit_development",
+    4: "maturity",
+}
 
 # ---------------------------------------------------------------------------
-# Stage-specific vitality configuration
+# Stage-specific vitality configuration — loaded from config.yaml
+# Edit values in config.yaml, they reflect here automatically.
 # ---------------------------------------------------------------------------
 
 @dataclass
@@ -31,21 +46,24 @@ class VitalityConfig:
     vitality_drain: float     # vitality lost per dry hour (0.0–1.0)
 
 
+# Built from config.yaml stages section — change values there, not here
 VITALITY_CONFIGS: dict[int, VitalityConfig] = {
-    0: VitalityConfig("wilting_point",    2,  4, 0.20),  # Germination — most fragile
-    1: VitalityConfig("wilting_point",    6,  8, 0.12),  # Vegetative
-    2: VitalityConfig("stress_threshold", 12, 10, 0.08), # Flowering — flower drop = death
-    3: VitalityConfig("wilting_point",    12, 12, 0.06), # Fruit development
-    4: VitalityConfig("wilting_point",    24, 24, 0.03), # Maturity — most resilient
+    idx: VitalityConfig(
+        dry_threshold_type=_s[key]["dry_threshold"],
+        dry_hours_limit=_s[key]["dry_hours_limit"],
+        wet_hours_limit=_s[key]["wet_hours_limit"],
+        vitality_drain=_s[key]["vitality_drain"],
+    )
+    for idx, key in _STAGE_KEYS.items()
 }
 
-# Terminal death penalty per stage — earlier death = larger penalty
+# Terminal death penalty per stage — loaded from config.yaml reward section
 DEATH_PENALTY: dict[int, float] = {
-    0: -100.0,  # Germination — catastrophic, entire season wasted
-    1: -80.0,   # Vegetative
-    2: -60.0,   # Flowering — total crop failure
-    3: -40.0,   # Fruit development
-    4: -20.0,   # Maturity — some crop may be salvageable
+    0: float(_dp["stage_0"]),
+    1: float(_dp["stage_1"]),
+    2: float(_dp["stage_2"]),
+    3: float(_dp["stage_3"]),
+    4: float(_dp["stage_4"]),
 }
 
 

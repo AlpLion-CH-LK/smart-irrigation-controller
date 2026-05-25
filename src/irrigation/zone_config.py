@@ -7,14 +7,18 @@ and a single irrigation valve. All water calculations are per zone.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from irrigation.config_loader import load_config
+
+# Load zone defaults from config.yaml → zone section
+_z = load_config()["zone"]
 
 
 @dataclass
 class ZoneConfig:
     """Configuration for one irrigation zone.
 
-    Defaults match the Sri Lanka Dept. of Agriculture recommendation for
-    Jaffna chilli: 3m × 1m raised bed, drip irrigation.
+    Defaults come from config.yaml → zone section.
+    Override by passing explicit values (e.g. for a different farm size).
 
     Args:
         area_m2: Zone area in square metres.
@@ -24,11 +28,11 @@ class ZoneConfig:
         root_depth_m: Crop root zone depth used for moisture calculations.
     """
 
-    area_m2: float = 3.0
-    irrigation_type: str = "drip"
-    max_litres_per_event: float = 15.0
-    emergency_min_litres: float = 2.0
-    root_depth_m: float = 0.3
+    area_m2:              float = _z["area_m2"]
+    irrigation_type:      str   = _z["irrigation_type"]
+    max_litres_per_event: float = _z["max_litres_per_event"]
+    emergency_min_litres: float = _z["emergency_min_litres"]
+    root_depth_m:         float = _z["root_depth_m"]
 
     @property
     def efficiency(self) -> float:

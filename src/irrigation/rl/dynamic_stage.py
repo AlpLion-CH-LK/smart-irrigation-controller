@@ -14,28 +14,42 @@ the stage is forced to advance regardless (plant is stunted but alive).
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from irrigation.config_loader import load_config
 from irrigation.crops.base import CropProfile
 
+# Load stage timing parameters from config.yaml → stages section
+_cfg = load_config()
+_s   = _cfg["stages"]
+
+_STAGE_KEYS = {
+    0: "germination",
+    1: "vegetative",
+    2: "flowering",
+    3: "fruit_development",
+    4: "maturity",
+}
 
 # ---------------------------------------------------------------------------
-# Stage timing and health thresholds
-# Based on FAO Paper 56 chilli growth stage durations with ±20% tolerance
+# Stage timing and health thresholds — loaded from config.yaml
+# Edit min_days, max_days, health_required there — reflects here automatically.
 # ---------------------------------------------------------------------------
 
 @dataclass
 class StageConfig:
-    min_hours: int      # minimum hours before stage can advance
-    max_hours: int      # maximum hours — forced advance after this
+    min_hours: int        # minimum hours before stage can advance
+    max_hours: int        # maximum hours — forced advance after this
     health_required: float  # health ratio needed for normal advance (0.0-1.0)
 
 
+# Built from config.yaml stages section — days converted to hours here
 STAGE_CONFIGS: dict[int, StageConfig] = {
-    0: StageConfig(min_hours=15 * 24, max_hours=30 * 24, health_required=0.70),
-    1: StageConfig(min_hours=30 * 24, max_hours=55 * 24, health_required=0.70),
-    2: StageConfig(min_hours=25 * 24, max_hours=40 * 24, health_required=0.75),
-    3: StageConfig(min_hours=25 * 24, max_hours=40 * 24, health_required=0.70),
-    4: StageConfig(min_hours=25 * 24, max_hours=40 * 24, health_required=0.65),
+    idx: StageConfig(
+        min_hours=_s[key]["min_days"] * 24,       # convert days → hours
+        max_hours=_s[key]["max_days"] * 24,
+        health_required=_s[key]["health_required"],
+    )
+    for idx, key in _STAGE_KEYS.items()
 }
 
 # Human-readable stage names for reporting
