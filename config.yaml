@@ -126,11 +126,11 @@ reward:
 # TRAINING — Curriculum learning and episode configuration
 # -----------------------------------------------------------------------------
 training:
-  total_timesteps: 500000   # Total environment steps across both phases
+  total_timesteps: 500000   # Total environment steps across all three phases
   n_envs: 4                 # Parallel environments for faster data collection
-  phase1_ratio: 0.4         # Fraction of timesteps for Phase 1 (dry months)
-                            # Phase 1: 40% = 200,000 steps (dry, favorable)
-                            # Phase 2: 60% = 300,000 steps (all months)
+  phase1_ratio: 0.25        # Phase 1 (Yala only):  25% = 125,000 steps
+  phase2_ratio: 0.35        # Phase 2 (Maha only):  35% = 175,000 steps
+  phase3_ratio: 0.40        # Phase 3 (Both, random year per month): 40% = 200,000 steps
   log_interval: 10          # Print episode summary every N episodes
   step_hours: 1.0           # Simulated hours per step (matches hourly NASA data)
 

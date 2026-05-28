@@ -1,0 +1,46 @@
+{
+  "os": "Linux-6.8.0-111-generic-x86_64-with-glibc2.35",
+  "python": "CPython 3.10.12",
+  "startedAt": "2026-05-28T12:57:11.431289Z",
+  "args": [
+    "--timesteps",
+    "10000",
+    "--n-envs",
+    "1"
+  ],
+  "program": "/home/nathiskar/smart-irrigation-controller/scripts/train.py",
+  "codePath": "scripts/train.py",
+  "codePathLocal": "scripts/train.py",
+  "git": {
+    "remote": "https://github.com/NATANAlways/smart-irrigation-controller.git",
+    "commit": "dae73b8c86c4fdd761469bf4da9da05f53c6a38a"
+  },
+  "email": "nathisofficial@gmail.com",
+  "root": "/home/nathiskar/smart-irrigation-controller",
+  "host": "nathiskar-Dell-G15-5511",
+  "executable": "/home/nathiskar/smart-irrigation-controller/irrigation/bin/python",
+  "cpu_count": 8,
+  "cpu_count_logical": 16,
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "738145099776",
+      "used": "546222919680"
+    }
+  },
+  "memory": {
+    "total": "8042778624"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce RTX 3050 Laptop GPU",
+      "memoryTotal": "4294967296",
+      "cudaCores": 2048,
+      "architecture": "Ampere",
+      "uuid": "GPU-fb73fdc1-9e08-da00-7c12-ece3740c2b27"
+    }
+  ],
+  "cudaVersion": "13.0",
+  "writerId": "17ow9xmu42nqjrb1s1v4b9zrc6r5o7uj"
+}

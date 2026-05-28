@@ -14,9 +14,15 @@ Usage:
     python scripts/train.py --log-interval 5
 """
 
+
+
 from __future__ import annotations
 
+import wandb
+from wandb.integration.sb3 import WandbCallback
+
 import argparse
+from datetime import datetime
 from pathlib import Path
 
 from stable_baselines3 import PPO
@@ -54,6 +60,7 @@ def _make_callbacks(
             name_prefix="ppo_irrigation",
         ),
         IrrigationMonitorCallback(log_interval=log_interval, verbose=1),
+        WandbCallback(verbose=0), 
     ]
 
 
@@ -64,37 +71,62 @@ def train(
     area_m2: float        = _cfg["zone"]["area_m2"],
     irrigation_type: str  = _cfg["zone"]["irrigation_type"],
     phase1_ratio: float   = _train["phase1_ratio"],
+    phase2_ratio: float   = _train["phase2_ratio"],
+    phase3_ratio: float   = _train["phase3_ratio"],
     log_interval: int     = _train["log_interval"],
 ) -> None:
+    
+    
     zone = ZoneConfig(area_m2=area_m2, irrigation_type=irrigation_type)
-    output_path = Path(output_dir)
+    today = datetime.now().strftime("%Y-%m-%d")
+    output_path = Path(output_dir) / today
     output_path.mkdir(parents=True, exist_ok=True)
 
+    run = wandb.init(
+        project="smart-irrigation-controller",
+        config={
+            "total_timesteps": total_timesteps,
+            "n_envs": n_envs,
+            "phase1_ratio": phase1_ratio,
+            "phase2_ratio": phase2_ratio,
+            "phase3_ratio": phase3_ratio,
+            "learning_rate": _ppo["learning_rate"],
+            "gamma": _ppo["gamma"],
+            "n_steps": _ppo["n_steps"],
+            "batch_size": _ppo["batch_size"],
+            "clip_range": _ppo["clip_range"],
+            "area_m2": area_m2,
+            "irrigation_type": irrigation_type,
+        },
+        sync_tensorboard=True,
+    )
+
     phase1_steps = int(total_timesteps * phase1_ratio)
-    phase2_steps = total_timesteps - phase1_steps
+    phase2_steps = int(total_timesteps * phase2_ratio)
+    phase3_steps = total_timesteps - phase1_steps - phase2_steps
 
     print("=" * 62)
-    print("  PPO Smart Irrigation — Curriculum Learning")
+    print("  PPO Smart Irrigation — 3-Phase Curriculum Learning")
     print("=" * 62)
     print(f"  Zone          : {area_m2}m²  {irrigation_type}  ({zone.efficiency*100:.0f}% efficiency)")
     print(f"  Total steps   : {total_timesteps:,}")
-    print(f"  Phase 1 steps : {phase1_steps:,}  ({phase1_ratio*100:.0f}%)  dry months (Feb–Apr)")
-    print(f"  Phase 2 steps : {phase2_steps:,}  ({(1-phase1_ratio)*100:.0f}%)  all months")
+    print(f"  Phase 1 steps : {phase1_steps:,}  ({phase1_ratio*100:.0f}%)  Yala season (Jan–Mar start)")
+    print(f"  Phase 2 steps : {phase2_steps:,}  ({phase2_ratio*100:.0f}%)  Maha season (Aug–Sep start)")
+    print(f"  Phase 3 steps : {phase3_steps:,}  ({phase3_ratio*100:.0f}%)  Both seasons, random year/month")
     print(f"  Episode length: 3,600 steps  (150 days × 24 hr/day)")
     print(f"  Parallel envs : {n_envs}")
     print(f"  Log interval  : every {log_interval} episodes")
     print("=" * 62)
 
     # ------------------------------------------------------------------
-    # Phase 1 — Dry season months (learn basic irrigation)
+    # Phase 1 — Yala season (Jan/Feb/Mar start, fixed year, sequential months)
     # ------------------------------------------------------------------
-    print("\n[PHASE 1] Training on dry months (Feb–Apr Jaffna)...")
+    print("\n[PHASE 1] Yala season — dry conditions, Jan/Feb/Mar planting...")
 
     phase1_kwargs = {"zone": zone, "training_phase": 1}
     train_env_p1 = make_vec_env(IrrigationGymEnv, n_envs=n_envs, env_kwargs=phase1_kwargs)
     eval_env_p1  = make_vec_env(IrrigationGymEnv, n_envs=1,      env_kwargs=phase1_kwargs)
 
-    # PPO hyperparameters — all from config.yaml → ppo section
     model = PPO(
         "MlpPolicy",
         train_env_p1,
@@ -115,14 +147,14 @@ def train(
         reset_num_timesteps=True,
     )
 
-    phase1_save = output_path / "ppo_phase1_complete"
+    phase1_save = output_path / "ppo_phase1_yala"
     model.save(str(phase1_save))
     print(f"\n[PHASE 1] Complete — model saved to {phase1_save}")
 
     # ------------------------------------------------------------------
-    # Phase 2 — All months (generalise to monsoon + varied conditions)
+    # Phase 2 — Maha season (Aug/Sep start, fixed year, sequential months)
     # ------------------------------------------------------------------
-    print("\n[PHASE 2] Training on all months (dry + moderate + monsoon)...")
+    print("\n[PHASE 2] Maha season — monsoon conditions, Aug/Sep planting...")
 
     phase2_kwargs = {"zone": zone, "training_phase": 2}
     train_env_p2 = make_vec_env(IrrigationGymEnv, n_envs=n_envs, env_kwargs=phase2_kwargs)
@@ -135,10 +167,31 @@ def train(
         reset_num_timesteps=False,
     )
 
+    phase2_save = output_path / "ppo_phase2_maha"
+    model.save(str(phase2_save))
+    print(f"\n[PHASE 2] Complete — model saved to {phase2_save}")
+
+    # ------------------------------------------------------------------
+    # Phase 3 — Both seasons, random year per month (maximum variability)
+    # ------------------------------------------------------------------
+    print("\n[PHASE 3] Both seasons — random year per month, full variability...")
+
+    phase3_kwargs = {"zone": zone, "training_phase": 3}
+    train_env_p3 = make_vec_env(IrrigationGymEnv, n_envs=n_envs, env_kwargs=phase3_kwargs)
+    eval_env_p3  = make_vec_env(IrrigationGymEnv, n_envs=1,      env_kwargs=phase3_kwargs)
+
+    model.set_env(train_env_p3)
+    model.learn(
+        total_timesteps=phase3_steps,
+        callback=_make_callbacks(output_path / "phase3", eval_env_p3, log_interval),
+        reset_num_timesteps=False,
+    )
+
     final_save = output_path / "ppo_irrigation_final"
     model.save(str(final_save))
-    print(f"\n[PHASE 2] Complete — final model saved to {final_save}")
+    print(f"\n[PHASE 3] Complete — final model saved to {final_save}")
     print("\nTraining complete.")
+    run.finish()
 
 
 if __name__ == "__main__":
@@ -152,8 +205,12 @@ if __name__ == "__main__":
                         help="Zone area in m²")
     parser.add_argument("--irrigation-type", type=str,  default="drip",
                         choices=["drip", "sprinkler"])
-    parser.add_argument("--phase1-ratio",    type=float, default=0.4,
-                        help="Fraction of timesteps for Phase 1 (0.0–1.0)")
+    parser.add_argument("--phase1-ratio",    type=float, default=0.25,
+                        help="Fraction of timesteps for Phase 1 — Yala season")
+    parser.add_argument("--phase2-ratio",    type=float, default=0.35,
+                        help="Fraction of timesteps for Phase 2 — Maha season")
+    parser.add_argument("--phase3-ratio",    type=float, default=0.40,
+                        help="Fraction of timesteps for Phase 3 — both seasons")
     parser.add_argument("--log-interval",    type=int,   default=10,
                         help="Print episode summary every N episodes")
     args = parser.parse_args()
@@ -165,5 +222,7 @@ if __name__ == "__main__":
         args.area,
         args.irrigation_type,
         args.phase1_ratio,
+        args.phase2_ratio,
+        args.phase3_ratio,
         args.log_interval,
     )

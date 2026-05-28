@@ -62,6 +62,7 @@ class WeatherDataLoader:
         df["datetime"] = pd.to_datetime(df["datetime"])
         df["hour"]  = df["datetime"].dt.hour
         df["month"] = df["datetime"].dt.month
+        df["year"]  = df["datetime"].dt.year
 
         # Pre-index by (hour, month) → list of WeatherRecord tuples
         self._index: dict[tuple[int, int], list[WeatherRecord]] = {}
@@ -79,6 +80,29 @@ class WeatherDataLoader:
                 for row in group.itertuples()
             ]
             self._index[(int(hour), int(month))] = records
+
+        # Pre-index by (hour, month, year) for season-aware sequential sampling
+        self._year_index: dict[tuple[int, int, int], list[WeatherRecord]] = {}
+        for (hour, month, year), group in df.groupby(["hour", "month", "year"]):
+            records = [
+                WeatherRecord(
+                    temperature   = float(row.temperature),
+                    humidity_pct  = float(row.humidity_pct),
+                    rain_mm       = float(row.rain_mm),
+                    is_raining    = bool(row.is_raining),
+                    wind_speed_ms = float(row.wind_speed_ms),
+                    solar_rad_MJ  = float(row.solar_rad_MJ),
+                    et0_mm        = float(row.et0_mm),
+                )
+                for row in group.itertuples()
+            ]
+            self._year_index[(int(hour), int(month), int(year))] = records
+
+        # Month → available years mapping for start year selection
+        self._month_years: dict[int, list[int]] = {
+            int(m): sorted(int(y) for y in grp["year"].unique())
+            for m, grp in df.groupby("month")
+        }
 
         self._rng = __import__("random").Random()
         print(
@@ -116,3 +140,19 @@ class WeatherDataLoader:
                 candidates.extend(self._index.get((hour, m), []))
 
         return self._rng.choice(candidates)
+
+    def sample_for_year(self, hour: int, month: int, year: int) -> WeatherRecord:
+        """Return a random real record for the given hour, month and year.
+
+        Used for season-aware sequential sampling (Phases 1, 2, 3).
+        Falls back to any year for that month if the specific year is missing.
+        """
+        hour = int(hour) % 24
+        candidates = self._year_index.get((hour, int(month), int(year)), [])
+        if not candidates:
+            return self.sample(hour, months=[int(month)])
+        return self._rng.choice(candidates)
+
+    def get_years_for_month(self, month: int) -> list[int]:
+        """Return all years that have data for the given month."""
+        return self._month_years.get(int(month), list(range(2004, 2025)))
