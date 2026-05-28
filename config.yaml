@@ -1,0 +1,165 @@
+# =============================================================================
+# Smart Irrigation Controller — Central Configuration
+# =============================================================================
+# All parameters for the RL agent, simulation, reward, and training are here.
+# Change a value here and it reflects everywhere — no code changes needed.
+# =============================================================================
+
+
+# -----------------------------------------------------------------------------
+# ZONE — Physical description of one irrigation zone
+# Based on Sri Lanka Dept. of Agriculture standard Jaffna chilli bed.
+# -----------------------------------------------------------------------------
+zone:
+  area_m2: 3.0                # Zone size in square metres (3m × 1m raised bed)
+  irrigation_type: drip       # "drip" (90% efficient) or "sprinkler" (75%)
+  max_litres_per_event: 15.0  # Maximum water per irrigation event (safety cap)
+  emergency_min_litres: 2.0   # Minimum water when soil is near wilting point
+  root_depth_m: 0.3           # Chilli root zone depth (metres) — used for ET conversion
+
+
+# -----------------------------------------------------------------------------
+# CROP — Jaffna chilli (Capsicum annuum) water requirements
+# ETc values from Sri Lanka DoA + FAO Paper 56 for a 3m² bed.
+# -----------------------------------------------------------------------------
+crop:
+  growing_season_days: 150    # Total season length from planting to harvest
+
+  # Stage-specific daily water requirements (litres per day for 3m² zone)
+  # Calculated as: ETc_mm/day × Kc × zone_area_m²
+  etc_litres_per_day:
+    stage_0: 5.0    # Germination (day 0-20)   — low demand, establishing
+    stage_1: 8.6    # Vegetative  (day 20-60)  — moderate demand, roots growing
+    stage_2: 12.7   # Flowering   (day 60-90)  — PEAK demand, critical stage
+    stage_3: 12.2   # Fruit dev   (day 90-120) — high demand, fruit filling
+    stage_4: 10.3   # Maturity    (day 120-150)— reducing demand, ripening
+
+
+# -----------------------------------------------------------------------------
+# STAGES — Growth stage timing and health thresholds
+# Stage advances only when BOTH min_days elapsed AND health_required met.
+# If health never reaches threshold, forced advance at max_days (stunted plant).
+# Source: FAO Paper 56 chilli stage durations ± 20% tolerance.
+# -----------------------------------------------------------------------------
+stages:
+  germination:                  # Stage 0 — most fragile, no root system
+    min_days: 15                # Must spend at least 15 days in germination
+    max_days: 30                # Forced to advance after 30 days (stunted)
+    health_required: 0.70       # 70% of hours must be in optimal moisture range
+    dry_threshold: wilting_point  # Death triggered at wilting point (20%)
+    dry_hours_limit: 2          # 2 consecutive dry hours → plant dies (no roots)
+    wet_hours_limit: 4          # 4 consecutive waterlogged hours → root rot
+    vitality_drain: 0.20        # Vitality lost per stressed hour (fast drain)
+
+  vegetative:                   # Stage 1 — young roots establishing
+    min_days: 30
+    max_days: 55
+    health_required: 0.70
+    dry_threshold: wilting_point
+    dry_hours_limit: 6          # Can survive 6 dry hours (some root system)
+    wet_hours_limit: 8
+    vitality_drain: 0.12
+
+  flowering:                    # Stage 2 — MOST CRITICAL stage
+    min_days: 25
+    max_days: 40
+    health_required: 0.75       # Higher health required to complete flowering
+    # NOTE: dry_threshold = stress_threshold here (NOT wilting_point)
+    # Chilli drops flowers at stress threshold (55%) — below that = no fruit
+    # This is agronomically equivalent to plant death even if plant survives
+    dry_threshold: stress_threshold
+    dry_hours_limit: 12
+    wet_hours_limit: 10
+    vitality_drain: 0.08
+
+  fruit_development:            # Stage 3 — fruit filling
+    min_days: 25
+    max_days: 40
+    health_required: 0.70
+    dry_threshold: wilting_point
+    dry_hours_limit: 12
+    wet_hours_limit: 12
+    vitality_drain: 0.06
+
+  maturity:                     # Stage 4 — most resilient, ripening
+    min_days: 25
+    max_days: 40
+    health_required: 0.65       # Lower health requirement — plant is hardy
+    dry_threshold: wilting_point
+    dry_hours_limit: 24         # Can survive a full dry day
+    wet_hours_limit: 24
+    vitality_drain: 0.03        # Slow drain — mature plant is resilient
+
+
+# -----------------------------------------------------------------------------
+# REWARD — Signal that teaches the agent what is good and bad behaviour
+# All weights are relative to each other — change the balance here.
+# -----------------------------------------------------------------------------
+reward:
+  # Penalty for using water — scaled by (water_litres / max_litres_per_event)
+  # 0.3 means max water gives penalty of -0.3, same scale as the +0.5 optimal bonus
+  water_penalty_weight: 0.3
+
+  # Penalty multiplier for plant water stress (0 = no stress, 1 = at wilting point)
+  # Higher value → agent prioritises keeping moisture up over saving water
+  stress_penalty_weight: 1.0
+
+  # Penalty for soil moisture above field capacity (waterlogging)
+  # Applied as: overwater_penalty × (excess_moisture / 10)
+  overwater_penalty: 2.0
+
+  # Bonus reward for NOT irrigating when it is raining
+  # Teaches the agent to use rain as free water
+  rain_bonus: 0.5
+
+  # Terminal reward added to final step reward when plant dies
+  # Earlier death = larger penalty (more season wasted)
+  death_penalty:
+    stage_0: -100.0   # Germination — entire season investment lost
+    stage_1: -80.0    # Vegetative
+    stage_2: -60.0    # Flowering — total crop failure (no fruit)
+    stage_3: -40.0    # Fruit development
+    stage_4: -20.0    # Maturity — some harvest may still be salvageable
+
+
+# -----------------------------------------------------------------------------
+# TRAINING — Curriculum learning and episode configuration
+# -----------------------------------------------------------------------------
+training:
+  total_timesteps: 500000   # Total environment steps across all three phases
+  n_envs: 4                 # Parallel environments for faster data collection
+  phase1_ratio: 0.25        # Phase 1 (Yala only):  25% = 125,000 steps
+  phase2_ratio: 0.35        # Phase 2 (Maha only):  35% = 175,000 steps
+  phase3_ratio: 0.40        # Phase 3 (Both, random year per month): 40% = 200,000 steps
+  log_interval: 10          # Print episode summary every N episodes
+  step_hours: 1.0           # Simulated hours per step (matches hourly NASA data)
+
+
+# -----------------------------------------------------------------------------
+# PPO — Proximal Policy Optimisation hyperparameters
+# These control how the neural network learns from experience.
+# -----------------------------------------------------------------------------
+ppo:
+  learning_rate: 0.0003     # How fast the network updates weights
+                            # Too high → unstable, too low → slow learning
+
+  n_steps: 3600             # Steps collected per env before each PPO update
+                            # Set to 3600 = one full episode so PPO sees
+                            # complete seasons before learning from them
+
+  batch_size: 128           # Mini-batch size for gradient updates
+                            # Larger = more stable but slower per update
+
+  n_epochs: 10              # How many passes over collected data per update
+                            # Higher = more learning per batch of experience
+
+  gamma: 0.995              # Discount factor — how much future rewards matter
+                            # 0.995 means reward 3600 steps away still matters
+                            # Higher than default 0.99 because our episodes
+                            # are long and early irrigation affects late yield
+
+  gae_lambda: 0.95          # Generalized Advantage Estimation smoothing
+                            # Controls bias-variance tradeoff in advantage estimates
+
+  clip_range: 0.2           # PPO clipping — limits how much policy changes per update
+                            # Standard value, rarely needs changing

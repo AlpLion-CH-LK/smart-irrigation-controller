@@ -1,0 +1,135 @@
+{"time":"2026-05-28T21:07:52.701788463+05:30","level":"INFO","msg":"wandb-core"}
+{"time":"2026-05-28T21:07:52.703088614+05:30","level":"INFO","msg":"stream: starting","core version":"0.27.0"}
+{"time":"2026-05-28T21:07:54.638051019+05:30","level":"INFO","msg":"stream: created new stream","id":"swkw4xf5"}
+{"time":"2026-05-28T21:07:54.638271113+05:30","level":"INFO","msg":"handler: started"}
+{"time":"2026-05-28T21:07:54.638429449+05:30","level":"INFO","msg":"stream: started"}
+{"time":"2026-05-28T21:07:54.639131662+05:30","level":"INFO","msg":"writer: started","stream_id":"swkw4xf5"}
+{"time":"2026-05-28T21:07:54.639135797+05:30","level":"INFO","msg":"sender: started"}
+{"time":"2026-05-28T21:07:55.52032881+05:30","level":"INFO","msg":"filestream: sending request","total_files":1,"console_offset":0,"console_lines":1}
+{"time":"2026-05-28T21:07:56.08360272+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-28T21:08:10.523261577+05:30","level":"INFO","msg":"filestream: sending request","total_files":2,"events_offset":0,"events_lines":2,"console_offset":1,"console_lines":747,"uploaded_len":2}
+{"time":"2026-05-28T21:08:11.23654643+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-28T21:08:13.72855205+05:30","level":"WARN","msg":"tensorboard: no root directory","error":"timed out after 10s"}
+{"time":"2026-05-28T21:08:13.72860886+05:30","level":"INFO","msg":"tensorboard: tracking new log directory","rootDir":{},"logDir":"LocalOrCloudPath(LocalPath=\"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1\")","namespace":""}
+{"time":"2026-05-28T21:08:13.730018498+05:30","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982683.nathiskar-Dell-G15-5511.255297.0","runPath":"models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982683.nathiskar-Dell-G15-5511.255297.0"}
+{"time":"2026-05-28T21:08:13.731121411+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":1193}
+{"time":"2026-05-28T21:08:13.731221595+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":1}
+{"time":"2026-05-28T21:08:13.731339787+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":1243}
+{"time":"2026-05-28T21:08:13.731404414+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":1}
+{"time":"2026-05-28T21:08:13.732017738+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":1329}
+{"time":"2026-05-28T21:08:13.735256193+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":513}
+{"time":"2026-05-28T21:08:18.736674266+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":2306}
+{"time":"2026-05-28T21:08:18.742084169+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":228}
+{"time":"2026-05-28T21:08:23.739708475+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":2992}
+{"time":"2026-05-28T21:08:23.743986506+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":262}
+{"time":"2026-05-28T21:08:25.526957509+05:30","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":0,"history_lines":463,"events_offset":2,"events_lines":2,"console_offset":748,"console_lines":1248}
+{"time":"2026-05-28T21:08:26.640302106+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-28T21:08:28.742175699+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":3669}
+{"time":"2026-05-28T21:08:28.744862738+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":264}
+{"time":"2026-05-28T21:08:36.241719065+05:30","level":"INFO","msg":"tensorboard: tracking new log directory","rootDir":{},"logDir":"LocalOrCloudPath(LocalPath=\"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1\")","namespace":""}
+{"time":"2026-05-28T21:08:36.241908649+05:30","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982683.nathiskar-Dell-G15-5511.255297.0","runPath":"events.out.tfevents.1779982683.nathiskar-Dell-G15-5511.255297.0"}
+{"time":"2026-05-28T21:08:36.245256897+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":4340}
+{"time":"2026-05-28T21:08:36.250644794+05:30","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982716.nathiskar-Dell-G15-5511.255297.1","runPath":"events.out.tfevents.1779982716.nathiskar-Dell-G15-5511.255297.1"}
+{"time":"2026-05-28T21:08:36.253863617+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":1289}
+{"time":"2026-05-28T21:08:38.744865879+05:30","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982716.nathiskar-Dell-G15-5511.255297.1","runPath":"models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982716.nathiskar-Dell-G15-5511.255297.1"}
+{"time":"2026-05-28T21:08:38.745419338+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":6037}
+{"time":"2026-05-28T21:08:38.745659688+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":29}
+{"time":"2026-05-28T21:08:38.745720854+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":6103}
+{"time":"2026-05-28T21:08:38.747087796+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":149}
+{"time":"2026-05-28T21:08:40.525217252+05:30","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":463,"history_lines":745,"events_offset":4,"events_lines":2,"console_offset":1996,"console_lines":870}
+{"time":"2026-05-28T21:08:41.252763894+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":6990}
+{"time":"2026-05-28T21:08:41.253645638+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":158}
+{"time":"2026-05-28T21:08:41.706022364+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-28T21:08:43.747209619+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":7353}
+{"time":"2026-05-28T21:08:43.749005122+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":312}
+{"time":"2026-05-28T21:08:46.254205274+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":7994}
+{"time":"2026-05-28T21:08:46.25431921+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":1}
+{"time":"2026-05-28T21:08:46.254532822+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":8053}
+{"time":"2026-05-28T21:08:46.256397433+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":231}
+{"time":"2026-05-28T21:08:48.749467253+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":8687}
+{"time":"2026-05-28T21:08:48.754834003+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":453}
+{"time":"2026-05-28T21:08:51.256414828+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":9420}
+{"time":"2026-05-28T21:08:51.256582769+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":7}
+{"time":"2026-05-28T21:08:51.256652245+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":9466}
+{"time":"2026-05-28T21:08:51.263716903+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":435}
+{"time":"2026-05-28T21:08:53.751480538+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":10143}
+{"time":"2026-05-28T21:08:53.756282915+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":289}
+{"time":"2026-05-28T21:08:55.532961497+05:30","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":1208,"history_lines":856,"events_offset":6,"events_lines":2,"console_offset":2866,"console_lines":1639}
+{"time":"2026-05-28T21:08:56.848798798+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-28T21:08:58.75288024+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":11394}
+{"time":"2026-05-28T21:08:58.755958505+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":328}
+{"time":"2026-05-28T21:09:01.263992512+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":11998}
+{"time":"2026-05-28T21:09:01.267422832+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":323}
+{"time":"2026-05-28T21:09:03.756230705+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":12669}
+{"time":"2026-05-28T21:09:03.759444375+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":244}
+{"time":"2026-05-28T21:09:06.266159474+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":13287}
+{"time":"2026-05-28T21:09:06.271602429+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":314}
+{"time":"2026-05-28T21:09:08.758501129+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":13718}
+{"time":"2026-05-28T21:09:08.762370472+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":284}
+{"time":"2026-05-28T21:09:10.52931586+05:30","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":2064,"history_lines":733,"events_offset":8,"events_lines":2,"console_offset":4505,"console_lines":1374}
+{"time":"2026-05-28T21:09:11.272114688+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":14294}
+{"time":"2026-05-28T21:09:11.276998901+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":221}
+{"time":"2026-05-28T21:09:11.470450873+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-28T21:09:13.760115169+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":14587}
+{"time":"2026-05-28T21:09:13.760679782+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":103}
+{"time":"2026-05-28T21:09:20.345483457+05:30","level":"INFO","msg":"tensorboard: tracking new log directory","rootDir":{},"logDir":"LocalOrCloudPath(LocalPath=\"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1\")","namespace":""}
+{"time":"2026-05-28T21:09:20.345643742+05:30","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982683.nathiskar-Dell-G15-5511.255297.0","runPath":"events.out.tfevents.1779982683.nathiskar-Dell-G15-5511.255297.0"}
+{"time":"2026-05-28T21:09:20.345679724+05:30","level":"ERROR","msg":"tensorboard: error creating symlink","target":"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982683.nathiskar-Dell-G15-5511.255297.0","symlink":"/home/nathiskar/smart-irrigation-controller/wandb/run-20260528_210752-swkw4xf5/files/events.out.tfevents.1779982683.nathiskar-Dell-G15-5511.255297.0","error":"symlink /home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982683.nathiskar-Dell-G15-5511.255297.0 /home/nathiskar/smart-irrigation-controller/wandb/run-20260528_210752-swkw4xf5/files/events.out.tfevents.1779982683.nathiskar-Dell-G15-5511.255297.0: file exists"}
+{"time":"2026-05-28T21:09:20.349199573+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":15179}
+{"time":"2026-05-28T21:09:20.354658889+05:30","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982716.nathiskar-Dell-G15-5511.255297.1","runPath":"events.out.tfevents.1779982716.nathiskar-Dell-G15-5511.255297.1"}
+{"time":"2026-05-28T21:09:20.354727158+05:30","level":"ERROR","msg":"tensorboard: error creating symlink","target":"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982716.nathiskar-Dell-G15-5511.255297.1","symlink":"/home/nathiskar/smart-irrigation-controller/wandb/run-20260528_210752-swkw4xf5/files/events.out.tfevents.1779982716.nathiskar-Dell-G15-5511.255297.1","error":"symlink /home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982716.nathiskar-Dell-G15-5511.255297.1 /home/nathiskar/smart-irrigation-controller/wandb/run-20260528_210752-swkw4xf5/files/events.out.tfevents.1779982716.nathiskar-Dell-G15-5511.255297.1: file exists"}
+{"time":"2026-05-28T21:09:20.367469102+05:30","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982760.nathiskar-Dell-G15-5511.255297.2","runPath":"events.out.tfevents.1779982760.nathiskar-Dell-G15-5511.255297.2"}
+{"time":"2026-05-28T21:09:20.371286093+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":3933}
+{"time":"2026-05-28T21:09:21.27718083+05:30","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982760.nathiskar-Dell-G15-5511.255297.2","runPath":"events.out.tfevents.1779982760.nathiskar-Dell-G15-5511.255297.2"}
+{"time":"2026-05-28T21:09:21.277252167+05:30","level":"ERROR","msg":"tensorboard: error creating symlink","target":"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982760.nathiskar-Dell-G15-5511.255297.2","symlink":"/home/nathiskar/smart-irrigation-controller/wandb/run-20260528_210752-swkw4xf5/files/events.out.tfevents.1779982760.nathiskar-Dell-G15-5511.255297.2","error":"symlink /home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982760.nathiskar-Dell-G15-5511.255297.2 /home/nathiskar/smart-irrigation-controller/wandb/run-20260528_210752-swkw4xf5/files/events.out.tfevents.1779982760.nathiskar-Dell-G15-5511.255297.2: file exists"}
+{"time":"2026-05-28T21:09:23.762868975+05:30","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/nathiskar/smart-irrigation-controller/models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982760.nathiskar-Dell-G15-5511.255297.2","runPath":"models/2026-05-28/logs/PPO_1/events.out.tfevents.1779982760.nathiskar-Dell-G15-5511.255297.2"}
+{"time":"2026-05-28T21:09:23.764175202+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":19311}
+{"time":"2026-05-28T21:09:23.766534247+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":43}
+{"time":"2026-05-28T21:09:25.369269368+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":19523}
+{"time":"2026-05-28T21:09:25.369536225+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":19}
+{"time":"2026-05-28T21:09:25.522051942+05:30","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":2797,"history_lines":1704,"events_offset":10,"events_lines":2,"console_offset":5879,"console_lines":195}
+{"time":"2026-05-28T21:09:26.52967788+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-28T21:09:28.768226011+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":19946}
+{"time":"2026-05-28T21:09:28.769177512+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":114}
+{"time":"2026-05-28T21:09:31.281018673+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":20304}
+{"time":"2026-05-28T21:09:31.281467084+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":87}
+{"time":"2026-05-28T21:09:31.281683804+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":20461}
+{"time":"2026-05-28T21:09:31.281878136+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":2}
+{"time":"2026-05-28T21:09:33.769925378+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":20538}
+{"time":"2026-05-28T21:09:33.770463302+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":75}
+{"time":"2026-05-28T21:09:35.373430773+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":20857}
+{"time":"2026-05-28T21:09:35.374019052+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":15}
+{"time":"2026-05-28T21:09:36.282684398+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":20952}
+{"time":"2026-05-28T21:09:36.283181776+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":50}
+{"time":"2026-05-28T21:09:38.771257922+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":21136}
+{"time":"2026-05-28T21:09:38.771989183+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":70}
+{"time":"2026-05-28T21:09:40.522252344+05:30","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":4501,"history_lines":461,"events_offset":12,"events_lines":2,"console_offset":6074,"console_lines":508}
+{"time":"2026-05-28T21:09:41.284354514+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-28T21:09:43.771930213+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":21630}
+{"time":"2026-05-28T21:09:43.772565204+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":96}
+{"time":"2026-05-28T21:09:45.375161928+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":21887}
+{"time":"2026-05-28T21:09:45.37602719+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":108}
+{"time":"2026-05-28T21:09:48.773230565+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":22296}
+{"time":"2026-05-28T21:09:48.774655745+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":98}
+{"time":"2026-05-28T21:09:50.376676455+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":22493}
+{"time":"2026-05-28T21:09:50.37688997+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":1}
+{"time":"2026-05-28T21:09:51.286069716+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":22604}
+{"time":"2026-05-28T21:09:51.286863568+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":87}
+{"time":"2026-05-28T21:09:55.377669925+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":22998}
+{"time":"2026-05-28T21:09:55.378314259+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":81}
+{"time":"2026-05-28T21:09:55.525393621+05:30","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":4962,"history_lines":433,"events_offset":14,"events_lines":2,"console_offset":6582,"console_lines":509}
+{"time":"2026-05-28T21:09:56.288514418+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":23149}
+{"time":"2026-05-28T21:09:56.291005046+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":59}
+{"time":"2026-05-28T21:09:56.488207663+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-28T21:09:58.776074181+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":23333}
+{"time":"2026-05-28T21:09:58.776690342+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":104}
+{"time":"2026-05-28T21:10:01.29354524+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":23757}
+{"time":"2026-05-28T21:10:01.295856495+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":15}
+{"time":"2026-05-28T21:10:04.697492613+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-05-28T21:10:04.699225386+05:30","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":5395,"history_lines":209,"console_offset":7091,"console_lines":152,"uploaded_len":9,"complete":true,"exit_code":0}
+{"time":"2026-05-28T21:10:05.553683429+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-28T21:10:05.556673651+05:30","level":"INFO","msg":"handler: operation stats","stats":{}}
+{"time":"2026-05-28T21:10:05.563597849+05:30","level":"INFO","msg":"stream: finishing up"}
+{"time":"2026-05-28T21:10:05.563602709+05:30","level":"INFO","msg":"handler: closed"}
+{"time":"2026-05-28T21:10:05.563636705+05:30","level":"INFO","msg":"sender: closed"}
+{"time":"2026-05-28T21:10:05.563639481+05:30","level":"INFO","msg":"stream: all finished"}
