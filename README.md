@@ -174,6 +174,59 @@ See [docs/hardware-setup.md](docs/hardware-setup.md) for detailed wiring instruc
 | Relay module (1-channel) | Valve / pump switching | ~$2 |
 | 12 V DC pump (optional) | Active pumping | ~$10 |
 
+## Training & Testing the RL Agent (PPO)
+
+The agent is trained with Stable-Baselines3 PPO via `scripts/train.py`, using a
+3-phase curriculum (Yala season → Maha season → both seasons) over real NASA
+POWER hourly weather data for Uduvil, Jaffna.
+
+### Full training run
+
+```bash
+./irrigation/bin/python scripts/train.py
+```
+
+- Default: 500,000 timesteps, 4 parallel envs, 150-day (3,600-step) episodes.
+- Logs to Weights & Biases (`wandb`) and TensorBoard (`models/<date>/logs/`).
+- Saves phase checkpoints + final model under `models/<date>/`.
+
+Useful overrides:
+
+```bash
+# Custom zone size / irrigation type
+./irrigation/bin/python scripts/train.py --area 6.0 --irrigation-type sprinkler
+
+# Different total timesteps / parallel envs
+./irrigation/bin/python scripts/train.py --timesteps 1000000 --n-envs 8
+
+# Adjust curriculum phase split (must sum to 1.0)
+./irrigation/bin/python scripts/train.py --phase1-ratio 0.25 --phase2-ratio 0.35 --phase3-ratio 0.40
+```
+
+### Quick diagnostic run (testing scenario)
+
+For a fast sanity check (a few seconds) without uploading to wandb — useful
+after changing reward/config/weather logic, to see survival rate, death
+causes, and growth stage reached:
+
+```bash
+WANDB_MODE=offline ./irrigation/bin/python scripts/train.py \
+  --timesteps 6000 --n-envs 2 --log-interval 5 --output-dir /tmp/diag_run
+```
+
+`IrrigationMonitorCallback` prints a per-interval summary covering survival
+rate, death cause (drought/waterlogging), growth stage at episode end, plant
+health hours, and water usage.
+
+### Tracking weather data
+
+If `data/weather/uduvil_per_hour/uduvil_hourly_2004_2024.csv` is missing, fetch
+it first:
+
+```bash
+./irrigation/bin/python scripts/fetch_weather_hourly.py
+```
+
 ## Development
 
 ```bash

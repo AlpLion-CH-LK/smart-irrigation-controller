@@ -1,0 +1,2516 @@
+==============================================================
+  PPO Smart Irrigation — Curriculum Learning
+==============================================================
+  Zone          : 3.0m²  drip  (90% efficiency)
+  Total steps   : 10,000
+  Phase 1 steps : 4,000  (40%)  dry months (Feb–Apr)
+  Phase 2 steps : 6,000  (60%)  all months
+  Episode length: 3,600 steps  (150 days × 24 hr/day)
+  Parallel envs : 1
+  Log interval  : every 10 episodes
+==============================================================
+
+[PHASE 1] Training on dry months (Feb–Apr Jaffna)...
+WeatherDataLoader: loaded 184,104 records (2004-01-01 → 2024-12-31)
+WeatherDataLoader: loaded 184,104 records (2004-01-01 → 2024-12-31)
+Using cuda device
+/home/nathiskar/smart-irrigation-controller/irrigation/lib/python3.10/site-packages/stable_baselines3/ppo/ppo.py:155: UserWarning: You have specified a mini-batch size of 128, but because the `RolloutBuffer` is of size `n_steps * n_envs = 3600`, after every 28 untruncated mini-batches, there will be a truncated mini-batch of size 16
+We recommend using a `batch_size` that is a factor of `n_steps * n_envs`.
+Info: (n_steps=3600 and n_envs=1)
+  warnings.warn(
+/home/nathiskar/smart-irrigation-controller/irrigation/lib/python3.10/site-packages/stable_baselines3/common/on_policy_algorithm.py:150: UserWarning: You are trying to run PPO on the GPU, but it is primarily intended to run on the CPU when not using a CNN policy (you are using ActorCriticPolicy which should be a MlpPolicy). See https://github.com/DLR-RM/stable-baselines3/issues/1245 for more info. You can pass `device='cpu'` or `export CUDA_VISIBLE_DEVICES=` to force using the CPU.Note: The model will train, but the GPU utilization will be poor and the training might take longer than on CPU.
+  warnings.warn(
+Logging to models/logs/PPO_1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 10  |  Timestep 230  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.457  (1.0 = perfect)
+  Optimal moisture      :      7 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    105.8 L
+  Avg per day           :      0.7 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.457    |
+|    optimal_hours  | 6.9      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 106      |
+|    waterlog_hours | 4.4      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 20  |  Timestep 542  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.520  (1.0 = perfect)
+  Optimal moisture      :      9 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    155.9 L
+  Avg per day           :      1.0 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.52     |
+|    optimal_hours  | 8.8      |
+|    stress_hours   | 1.3      |
+|    survival_rate  | 0        |
+|    water_litres   | 156      |
+|    waterlog_hours | 4.2      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 30  |  Timestep 866  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.497  (1.0 = perfect)
+  Optimal moisture      :      8 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    156.0 L
+  Avg per day           :      1.0 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.497    |
+|    optimal_hours  | 7.9      |
+|    stress_hours   | 0.1      |
+|    survival_rate  | 0        |
+|    water_litres   | 156      |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 40  |  Timestep 1,151  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.587  (1.0 = perfect)
+  Optimal moisture      :     10 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    135.1 L
+  Avg per day           :      0.9 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.587    |
+|    optimal_hours  | 10.3     |
+|    stress_hours   | 0.1      |
+|    survival_rate  | 0        |
+|    water_litres   | 135      |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 50  |  Timestep 1,413  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.483  (1.0 = perfect)
+  Optimal moisture      :      9 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    125.1 L
+  Avg per day           :      0.8 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.483    |
+|    optimal_hours  | 9.2      |
+|    stress_hours   | 0.7      |
+|    survival_rate  | 0        |
+|    water_litres   | 125      |
+|    waterlog_hours | 4.1      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 60  |  Timestep 1,650  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.481  (1.0 = perfect)
+  Optimal moisture      :      5 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    136.2 L
+  Avg per day           :      0.9 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.481    |
+|    optimal_hours  | 5.4      |
+|    stress_hours   | 0.3      |
+|    survival_rate  | 0        |
+|    water_litres   | 136      |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 70  |  Timestep 1,910  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.516  (1.0 = perfect)
+  Optimal moisture      :      7 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    134.8 L
+  Avg per day           :      0.9 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.516    |
+|    optimal_hours  | 6.9      |
+|    stress_hours   | 0.1      |
+|    survival_rate  | 0        |
+|    water_litres   | 135      |
+|    waterlog_hours | 4.1      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 80  |  Timestep 2,136  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.447  (1.0 = perfect)
+  Optimal moisture      :      7 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    112.2 L
+  Avg per day           :      0.7 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.447    |
+|    optimal_hours  | 6.8      |
+|    stress_hours   | 0.1      |
+|    survival_rate  | 0        |
+|    water_litres   | 112      |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 90  |  Timestep 2,389  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.482  (1.0 = perfect)
+  Optimal moisture      :      7 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    114.8 L
+  Avg per day           :      0.8 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.482    |
+|    optimal_hours  | 6.9      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 115      |
+|    waterlog_hours | 4.1      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 100  |  Timestep 2,736  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.567  (1.0 = perfect)
+  Optimal moisture      :     11 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    145.3 L
+  Avg per day           :      1.0 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.567    |
+|    optimal_hours  | 11.2     |
+|    stress_hours   | 0.6      |
+|    survival_rate  | 0        |
+|    water_litres   | 145      |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 110  |  Timestep 2,998  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.504  (1.0 = perfect)
+  Optimal moisture      :      6 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    149.0 L
+  Avg per day           :      1.0 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.504    |
+|    optimal_hours  | 5.8      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 149      |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 120  |  Timestep 3,219  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.428  (1.0 = perfect)
+  Optimal moisture      :      4 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    124.1 L
+  Avg per day           :      0.8 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.428    |
+|    optimal_hours  | 4.1      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 124      |
+|    waterlog_hours | 4        |
+--------------------------------
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 27.3     |
+|    ep_rew_mean     | -100     |
+| time/              |          |
+|    fps             | 1353     |
+|    iterations      | 1        |
+|    time_elapsed    | 2        |
+|    total_timesteps | 3600     |
+---------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 130  |  Timestep 3,615  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.611  (1.0 = perfect)
+  Optimal moisture      :     15 hrs / 3600  (0%)
+  Stress hours          :      2 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    174.1 L
+  Avg per day           :      1.2 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+------------------------------------------
+| episode/                |              |
+|    critical_hours       | 0            |
+|    death_rate           | 1            |
+|    final_stage          | 0            |
+|    health_score         | 0.611        |
+|    optimal_hours        | 14.6         |
+|    stress_hours         | 2.2          |
+|    survival_rate        | 0            |
+|    water_litres         | 174          |
+|    waterlog_hours       | 4            |
+| train/                  |              |
+|    approx_kl            | 0.0027866366 |
+|    clip_fraction        | 0.0124       |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -1.41        |
+|    explained_variance   | -0.000376    |
+|    learning_rate        | 0.0003       |
+|    loss                 | 578          |
+|    n_updates            | 10           |
+|    policy_gradient_loss | -0.00153     |
+|    std                  | 0.99         |
+|    value_loss           | 2.54e+03     |
+------------------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 140  |  Timestep 3,919  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.564  (1.0 = perfect)
+  Optimal moisture      :     10 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    145.6 L
+  Avg per day           :      1.0 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.564    |
+|    optimal_hours  | 10.3     |
+|    stress_hours   | 0.8      |
+|    survival_rate  | 0        |
+|    water_litres   | 146      |
+|    waterlog_hours | 4.1      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 150  |  Timestep 4,197  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.466  (1.0 = perfect)
+  Optimal moisture      :      7 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    106.6 L
+  Avg per day           :      0.7 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.466    |
+|    optimal_hours  | 7.4      |
+|    stress_hours   | 0.6      |
+|    survival_rate  | 0        |
+|    water_litres   | 107      |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 160  |  Timestep 4,463  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.543  (1.0 = perfect)
+  Optimal moisture      :      8 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    118.9 L
+  Avg per day           :      0.8 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.543    |
+|    optimal_hours  | 8.3      |
+|    stress_hours   | 0.1      |
+|    survival_rate  | 0        |
+|    water_litres   | 119      |
+|    waterlog_hours | 4.1      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 170  |  Timestep 4,848  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.591  (1.0 = perfect)
+  Optimal moisture      :     14 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    151.0 L
+  Avg per day           :      1.0 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.591    |
+|    optimal_hours  | 14.4     |
+|    stress_hours   | 0.5      |
+|    survival_rate  | 0        |
+|    water_litres   | 151      |
+|    waterlog_hours | 4.1      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 180  |  Timestep 5,051  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.398  (1.0 = perfect)
+  Optimal moisture      :      2 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     79.7 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.398    |
+|    optimal_hours  | 2.5      |
+|    stress_hours   | 0.8      |
+|    survival_rate  | 0        |
+|    water_litres   | 79.7     |
+|    waterlog_hours | 4.1      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 190  |  Timestep 5,333  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.479  (1.0 = perfect)
+  Optimal moisture      :      6 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    116.9 L
+  Avg per day           :      0.8 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.479    |
+|    optimal_hours  | 5.8      |
+|    stress_hours   | 0.7      |
+|    survival_rate  | 0        |
+|    water_litres   | 117      |
+|    waterlog_hours | 4.2      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 200  |  Timestep 5,603  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.521  (1.0 = perfect)
+  Optimal moisture      :      8 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    121.5 L
+  Avg per day           :      0.8 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.521    |
+|    optimal_hours  | 8.5      |
+|    stress_hours   | 0.9      |
+|    survival_rate  | 0        |
+|    water_litres   | 122      |
+|    waterlog_hours | 4.4      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 210  |  Timestep 5,855  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.508  (1.0 = perfect)
+  Optimal moisture      :      9 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    104.1 L
+  Avg per day           :      0.7 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.508    |
+|    optimal_hours  | 8.6      |
+|    stress_hours   | 0.1      |
+|    survival_rate  | 0        |
+|    water_litres   | 104      |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 220  |  Timestep 6,087  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.446  (1.0 = perfect)
+  Optimal moisture      :      4 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     93.5 L
+  Avg per day           :      0.6 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.446    |
+|    optimal_hours  | 4        |
+|    stress_hours   | 0.2      |
+|    survival_rate  | 0        |
+|    water_litres   | 93.5     |
+|    waterlog_hours | 4.3      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 230  |  Timestep 6,337  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.422  (1.0 = perfect)
+  Optimal moisture      :      4 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    114.5 L
+  Avg per day           :      0.8 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.422    |
+|    optimal_hours  | 4.4      |
+|    stress_hours   | 0.3      |
+|    survival_rate  | 0        |
+|    water_litres   | 115      |
+|    waterlog_hours | 4.2      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 240  |  Timestep 6,664  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.543  (1.0 = perfect)
+  Optimal moisture      :      8 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      5 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    131.4 L
+  Avg per day           :      0.9 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.543    |
+|    optimal_hours  | 8.3      |
+|    stress_hours   | 0.3      |
+|    survival_rate  | 0        |
+|    water_litres   | 131      |
+|    waterlog_hours | 4.6      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 250  |  Timestep 6,989  |  Phase 1 — dry months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.479  (1.0 = perfect)
+  Optimal moisture      :      9 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    132.0 L
+  Avg per day           :      0.9 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.479    |
+|    optimal_hours  | 8.6      |
+|    stress_hours   | 1.3      |
+|    survival_rate  | 0        |
+|    water_litres   | 132      |
+|    waterlog_hours | 4.3      |
+--------------------------------
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 27.4     |
+|    ep_rew_mean     | -99.5    |
+| time/              |          |
+|    fps             | 995      |
+|    iterations      | 2        |
+|    time_elapsed    | 7        |
+|    total_timesteps | 7200     |
+---------------------------------
+
+[PHASE 1] Complete — model saved to models/ppo_phase1_complete
+
+[PHASE 2] Training on all months (dry + moderate + monsoon)...
+WeatherDataLoader: loaded 184,104 records (2004-01-01 → 2024-12-31)
+WeatherDataLoader: loaded 184,104 records (2004-01-01 → 2024-12-31)
+Logging to models/logs/PPO_1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 10  |  Timestep 7,394  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.449  (1.0 = perfect)
+  Optimal moisture      :      6 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     70.4 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.449    |
+|    optimal_hours  | 5.9      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 70.4     |
+|    waterlog_hours | 4.2      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 20  |  Timestep 7,572  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.443  (1.0 = perfect)
+  Optimal moisture      :      2 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     82.9 L
+  Avg per day           :      0.6 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.443    |
+|    optimal_hours  | 2.4      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 82.9     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 30  |  Timestep 7,771  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.484  (1.0 = perfect)
+  Optimal moisture      :      5 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     71.2 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.484    |
+|    optimal_hours  | 4.6      |
+|    stress_hours   | 0.5      |
+|    survival_rate  | 0        |
+|    water_litres   | 71.2     |
+|    waterlog_hours | 4.2      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 40  |  Timestep 7,959  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.453  (1.0 = perfect)
+  Optimal moisture      :      5 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     68.6 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.453    |
+|    optimal_hours  | 5.2      |
+|    stress_hours   | 0.5      |
+|    survival_rate  | 0        |
+|    water_litres   | 68.6     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 50  |  Timestep 8,127  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.402  (1.0 = perfect)
+  Optimal moisture      :      5 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     63.0 L
+  Avg per day           :      0.4 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.402    |
+|    optimal_hours  | 4.9      |
+|    stress_hours   | 0.4      |
+|    survival_rate  | 0        |
+|    water_litres   | 63       |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 60  |  Timestep 8,330  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.550  (1.0 = perfect)
+  Optimal moisture      :      8 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     81.1 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.55     |
+|    optimal_hours  | 8.2      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 81.1     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 70  |  Timestep 8,494  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.457  (1.0 = perfect)
+  Optimal moisture      :      4 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     72.4 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.457    |
+|    optimal_hours  | 4.2      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 72.4     |
+|    waterlog_hours | 4.2      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 80  |  Timestep 8,715  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.478  (1.0 = perfect)
+  Optimal moisture      :      6 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     87.2 L
+  Avg per day           :      0.6 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.478    |
+|    optimal_hours  | 5.7      |
+|    stress_hours   | 0.3      |
+|    survival_rate  | 0        |
+|    water_litres   | 87.2     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 90  |  Timestep 8,972  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.467  (1.0 = perfect)
+  Optimal moisture      :      5 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     95.7 L
+  Avg per day           :      0.6 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.467    |
+|    optimal_hours  | 4.8      |
+|    stress_hours   | 0.6      |
+|    survival_rate  | 0        |
+|    water_litres   | 95.7     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 100  |  Timestep 9,228  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.516  (1.0 = perfect)
+  Optimal moisture      :      8 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     79.3 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.516    |
+|    optimal_hours  | 8.1      |
+|    stress_hours   | 0.6      |
+|    survival_rate  | 0        |
+|    water_litres   | 79.3     |
+|    waterlog_hours | 4.3      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 110  |  Timestep 9,497  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.564  (1.0 = perfect)
+  Optimal moisture      :      9 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     90.9 L
+  Avg per day           :      0.6 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.564    |
+|    optimal_hours  | 8.7      |
+|    stress_hours   | 0.6      |
+|    survival_rate  | 0        |
+|    water_litres   | 90.9     |
+|    waterlog_hours | 4.1      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 120  |  Timestep 9,698  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.498  (1.0 = perfect)
+  Optimal moisture      :      6 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     78.2 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.498    |
+|    optimal_hours  | 5.7      |
+|    stress_hours   | 0.1      |
+|    survival_rate  | 0        |
+|    water_litres   | 78.2     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 130  |  Timestep 9,829  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.373  (1.0 = perfect)
+  Optimal moisture      :      3 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     54.6 L
+  Avg per day           :      0.4 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.373    |
+|    optimal_hours  | 2.7      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 54.6     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 140  |  Timestep 10,008  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.416  (1.0 = perfect)
+  Optimal moisture      :      5 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     77.5 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.416    |
+|    optimal_hours  | 4.6      |
+|    stress_hours   | 0.8      |
+|    survival_rate  | 0        |
+|    water_litres   | 77.5     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 150  |  Timestep 10,171  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.437  (1.0 = perfect)
+  Optimal moisture      :      4 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     70.8 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.437    |
+|    optimal_hours  | 4.4      |
+|    stress_hours   | 0.6      |
+|    survival_rate  | 0        |
+|    water_litres   | 70.8     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 160  |  Timestep 10,378  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.447  (1.0 = perfect)
+  Optimal moisture      :      8 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     91.9 L
+  Avg per day           :      0.6 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.447    |
+|    optimal_hours  | 7.5      |
+|    stress_hours   | 0.1      |
+|    survival_rate  | 0        |
+|    water_litres   | 91.9     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 170  |  Timestep 10,579  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.454  (1.0 = perfect)
+  Optimal moisture      :      5 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     82.0 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.454    |
+|    optimal_hours  | 5.1      |
+|    stress_hours   | 0.1      |
+|    survival_rate  | 0        |
+|    water_litres   | 82       |
+|    waterlog_hours | 4.2      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 180  |  Timestep 10,736  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.415  (1.0 = perfect)
+  Optimal moisture      :      3 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     47.4 L
+  Avg per day           :      0.3 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.415    |
+|    optimal_hours  | 3        |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 47.4     |
+|    waterlog_hours | 4.2      |
+--------------------------------
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 20.1     |
+|    ep_rew_mean     | -101     |
+| time/              |          |
+|    fps             | 1350     |
+|    iterations      | 1        |
+|    time_elapsed    | 2        |
+|    total_timesteps | 10800    |
+---------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 190  |  Timestep 10,960  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.473  (1.0 = perfect)
+  Optimal moisture      :      7 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     76.7 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+------------------------------------------
+| episode/                |              |
+|    critical_hours       | 0            |
+|    death_rate           | 1            |
+|    final_stage          | 0            |
+|    health_score         | 0.473        |
+|    optimal_hours        | 6.6          |
+|    stress_hours         | 0            |
+|    survival_rate        | 0            |
+|    water_litres         | 76.7         |
+|    waterlog_hours       | 4.3          |
+| train/                  |              |
+|    approx_kl            | 0.0017998408 |
+|    clip_fraction        | 0.00733      |
+|    clip_range           | 0.2          |
+|    entropy_loss         | -1.38        |
+|    explained_variance   | 0.000113     |
+|    learning_rate        | 0.0003       |
+|    loss                 | 864          |
+|    n_updates            | 30           |
+|    policy_gradient_loss | -0.00129     |
+|    std                  | 0.954        |
+|    value_loss           | 2.47e+03     |
+------------------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 200  |  Timestep 11,174  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.505  (1.0 = perfect)
+  Optimal moisture      :      6 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     70.6 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.505    |
+|    optimal_hours  | 6.1      |
+|    stress_hours   | 0.2      |
+|    survival_rate  | 0        |
+|    water_litres   | 70.6     |
+|    waterlog_hours | 4.3      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 210  |  Timestep 11,375  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.508  (1.0 = perfect)
+  Optimal moisture      :      7 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     75.9 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.508    |
+|    optimal_hours  | 7.4      |
+|    stress_hours   | 0.2      |
+|    survival_rate  | 0        |
+|    water_litres   | 75.9     |
+|    waterlog_hours | 4.1      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 220  |  Timestep 11,558  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.429  (1.0 = perfect)
+  Optimal moisture      :      4 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     60.4 L
+  Avg per day           :      0.4 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.429    |
+|    optimal_hours  | 3.8      |
+|    stress_hours   | 0.7      |
+|    survival_rate  | 0        |
+|    water_litres   | 60.4     |
+|    waterlog_hours | 4.1      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 230  |  Timestep 11,829  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.512  (1.0 = perfect)
+  Optimal moisture      :      8 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :    114.4 L
+  Avg per day           :      0.8 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.512    |
+|    optimal_hours  | 7.6      |
+|    stress_hours   | 0.3      |
+|    survival_rate  | 0        |
+|    water_litres   | 114      |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 240  |  Timestep 12,037  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.484  (1.0 = perfect)
+  Optimal moisture      :      6 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     79.8 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.484    |
+|    optimal_hours  | 5.6      |
+|    stress_hours   | 0.4      |
+|    survival_rate  | 0        |
+|    water_litres   | 79.8     |
+|    waterlog_hours | 4.1      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 250  |  Timestep 12,195  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.423  (1.0 = perfect)
+  Optimal moisture      :      3 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     66.2 L
+  Avg per day           :      0.4 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.423    |
+|    optimal_hours  | 2.7      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 66.2     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 260  |  Timestep 12,390  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.498  (1.0 = perfect)
+  Optimal moisture      :      6 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     70.9 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.498    |
+|    optimal_hours  | 6.3      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 70.9     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 270  |  Timestep 12,535  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.394  (1.0 = perfect)
+  Optimal moisture      :      3 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     57.6 L
+  Avg per day           :      0.4 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.394    |
+|    optimal_hours  | 2.9      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 57.6     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 280  |  Timestep 12,692  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.409  (1.0 = perfect)
+  Optimal moisture      :      4 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     57.1 L
+  Avg per day           :      0.4 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.409    |
+|    optimal_hours  | 3.9      |
+|    stress_hours   | 0.2      |
+|    survival_rate  | 0        |
+|    water_litres   | 57.1     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 290  |  Timestep 12,862  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.378  (1.0 = perfect)
+  Optimal moisture      :      4 hrs / 3600  (0%)
+  Stress hours          :      1 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     61.1 L
+  Avg per day           :      0.4 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.378    |
+|    optimal_hours  | 3.6      |
+|    stress_hours   | 1.1      |
+|    survival_rate  | 0        |
+|    water_litres   | 61.1     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 300  |  Timestep 12,990  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.424  (1.0 = perfect)
+  Optimal moisture      :      3 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     43.6 L
+  Avg per day           :      0.3 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.424    |
+|    optimal_hours  | 3.2      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 43.6     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 310  |  Timestep 13,123  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.369  (1.0 = perfect)
+  Optimal moisture      :      3 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     56.4 L
+  Avg per day           :      0.4 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.369    |
+|    optimal_hours  | 2.7      |
+|    stress_hours   | 0.1      |
+|    survival_rate  | 0        |
+|    water_litres   | 56.4     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 320  |  Timestep 13,247  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.377  (1.0 = perfect)
+  Optimal moisture      :      2 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     45.2 L
+  Avg per day           :      0.3 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.377    |
+|    optimal_hours  | 2.1      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 45.2     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 330  |  Timestep 13,455  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.433  (1.0 = perfect)
+  Optimal moisture      :      5 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     75.7 L
+  Avg per day           :      0.5 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.433    |
+|    optimal_hours  | 4.7      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 75.7     |
+|    waterlog_hours | 4        |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 340  |  Timestep 13,699  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.491  (1.0 = perfect)
+  Optimal moisture      :      6 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     83.0 L
+  Avg per day           :      0.6 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.491    |
+|    optimal_hours  | 6        |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 83       |
+|    waterlog_hours | 4.5      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 350  |  Timestep 13,887  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.440  (1.0 = perfect)
+  Optimal moisture      :      4 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     54.2 L
+  Avg per day           :      0.4 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.44     |
+|    optimal_hours  | 4.5      |
+|    stress_hours   | 0        |
+|    survival_rate  | 0        |
+|    water_litres   | 54.2     |
+|    waterlog_hours | 4.1      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 360  |  Timestep 14,046  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.418  (1.0 = perfect)
+  Optimal moisture      :      5 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     62.7 L
+  Avg per day           :      0.4 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.418    |
+|    optimal_hours  | 4.9      |
+|    stress_hours   | 0.2      |
+|    survival_rate  | 0        |
+|    water_litres   | 62.7     |
+|    waterlog_hours | 4.1      |
+--------------------------------
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [TRAINING]  Episode 370  |  Timestep 14,198  |  Phase 2 — all months
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  PLANT SURVIVAL  (last 10 episodes)
+  Survived    :   0 / 10  (0%)
+  Died        :  10 / 10  (100%)  —  drought: 0  waterlogging: 10
+  Most deaths at: Stage 0 — Germination
+
+  GROWTH STAGE AT EPISODE END
+  Stage 0 Germination   : 10  Stage 1 Vegetative    : 0  Stage 2 Flowering     : 0
+  Stage 3 Fruit dev     : 0  Stage 4 Maturity      : 0
+
+  PLANT HEALTH
+  Health score          : 0.345  (1.0 = perfect)
+  Optimal moisture      :      4 hrs / 3600  (0%)
+  Stress hours          :      0 hrs  (0%)
+  Critical hours        :      0 hrs  (0%)
+  Waterlog hours        :      4 hrs  (0%)
+
+  WATER USAGE
+  Avg per season        :     54.0 L
+  Avg per day           :      0.4 L/day
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+--------------------------------
+| episode/          |          |
+|    critical_hours | 0        |
+|    death_rate     | 1        |
+|    final_stage    | 0        |
+|    health_score   | 0.345    |
+|    optimal_hours  | 4.2      |
+|    stress_hours   | 0.5      |
+|    survival_rate  | 0        |
+|    water_litres   | 54       |
+|    waterlog_hours | 4.1      |
+--------------------------------
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 17.1     |
+|    ep_rew_mean     | -102     |
+| time/              |          |
+|    fps             | 1178     |
+|    iterations      | 2        |
+|    time_elapsed    | 6        |
+|    total_timesteps | 14400    |
+---------------------------------
+
+[PHASE 2] Complete — final model saved to models/ppo_irrigation_final
+
+Training complete.

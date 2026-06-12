@@ -49,3 +49,11 @@ models/
 # OS
 .DS_Store
 Thumbs.db
+
+# WandB
+wandb/
+!wandb/.gitkeep
+
+# Claude
+.claude/
+.claudeignore

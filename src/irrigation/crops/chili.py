@@ -9,7 +9,20 @@ References:
 
 from __future__ import annotations
 
+from irrigation.config_loader import load_config
 from irrigation.crops.base import CropProfile, MoistureThresholds
+
+# Stage-specific ETc water requirements — loaded from config.yaml → crop section
+# Source: Sri Lanka Dept. of Agriculture + FAO Paper 56 ETc calculations.
+# To change water requirements: edit config.yaml → crop → etc_litres_per_day
+_etc = load_config()["crop"]["etc_litres_per_day"]
+_STAGE_ETC_LITRES_PER_DAY = [
+    _etc["stage_0"],   # Germination — 1.8 mm/day × 3m² zone
+    _etc["stage_1"],   # Vegetative  — 3.2 mm/day × 3m² zone
+    _etc["stage_2"],   # Flowering   — 4.7 mm/day × 3m² zone (PEAK)
+    _etc["stage_3"],   # Fruit dev   — 4.5 mm/day × 3m² zone
+    _etc["stage_4"],   # Maturity    — 3.8 mm/day × 3m² zone
+]
 
 
 class ChiliProfile(CropProfile):
@@ -50,11 +63,23 @@ class ChiliProfile(CropProfile):
     def growing_season_days(self) -> int:
         return 150
     
-    def moisture_thresholds_for_stages(self, stages) -> MoistureThresholds:
+    def stage_for_day(self, day: int) -> int:
+        """Map day since planting to chili growth stage (0-4)."""
+        if day < 20:
+            return 0  # Germination
+        if day < 60:
+            return 1  # Vegetative
+        if day < 90:
+            return 2  # Flowering
+        if day < 120:
+            return 3  # Fruit development
+        return 4      # Maturity
 
-        """ Stage-specific thresholds based on FAQ Paper 56. """
+    def moisture_thresholds_for_stage(self, stage: int) -> MoistureThresholds:
 
-        if stages == 0: # Germination (days 0-20)
+        """ Stage-specific thresholds based on FAO Paper 56. """
+
+        if stage == 0:  # Germination (days 0-20)
             return MoistureThresholds(
                 wilting_point=20.0,
                 stress_threshold=45.0,
@@ -62,8 +87,7 @@ class ChiliProfile(CropProfile):
                 optimal_max=70.0,
                 field_capacity=85.0,
             )
-        
-        if stages == 1:  # Vegetative (days 20-60)
+        if stage == 1:  # Vegetative (days 20-60)
             return MoistureThresholds(
                 wilting_point=20.0,
                 stress_threshold=45.0,
@@ -71,8 +95,7 @@ class ChiliProfile(CropProfile):
                 optimal_max=70.0,
                 field_capacity=85.0,
             )
-        
-        if stages == 2: # Flowering (days 60-90)
+        if stage == 2:  # Flowering (days 60-90)
             return MoistureThresholds(
                 wilting_point=25.0,
                 stress_threshold=55.0,
@@ -80,8 +103,7 @@ class ChiliProfile(CropProfile):
                 optimal_max=75.0,
                 field_capacity=85.0,
             )
-        
-        if stages == 3:  # Fruit development (days 90-120)
+        if stage == 3:  # Fruit development (days 90-120)
             return MoistureThresholds(
                 wilting_point=25.0,
                 stress_threshold=55.0,
@@ -89,8 +111,7 @@ class ChiliProfile(CropProfile):
                 optimal_max=75.0,
                 field_capacity=85.0,
             )
-        
-        if stages == 4:  # Maturity (days 120-150)
+        if stage == 4:  # Maturity (days 120-150)
             return MoistureThresholds(
                 wilting_point=20.0,
                 stress_threshold=35.0,
@@ -99,5 +120,8 @@ class ChiliProfile(CropProfile):
                 field_capacity=85.0,
             )
         return self.moisture_thresholds
-    
+
+    def optimal_litres_per_day(self, stage: int) -> float:
+        """Stage-specific water requirement for a standard 3m² Jaffna chilli bed."""
+        return _STAGE_ETC_LITRES_PER_DAY[min(stage, 4)]
     

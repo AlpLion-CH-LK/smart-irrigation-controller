@@ -1,8 +1,4 @@
-"""Simulated actuator for testing and development.
-
-Records the history of commands issued so that tests can assert irrigation
-behaviour without physical hardware.
-"""
+"""Simulated actuator for testing and development."""
 
 from __future__ import annotations
 
@@ -17,27 +13,26 @@ class IrrigationEvent:
     """Records a single irrigation event."""
 
     timestamp: datetime
-    command: IrrigationCommand
-    total_water_litres: float
+    water_litres: float
 
 
 class SimulatedActuator(ActuatorInterface):
     """An actuator that simulates irrigation without hardware.
 
-    The actuator notifies an optional ``soil_sensor`` (a
-    :class:`~irrigation.sensors.simulation.SimulatedSoilMoistureSensor`) so
-    that the RL environment sees a realistic soil moisture response to
-    irrigation commands.
+    Notifies an optional soil sensor so the RL environment sees a realistic
+    moisture response to irrigation commands.
 
     Args:
         soil_sensor: Optional simulated soil sensor to update on irrigation.
-        moisture_per_litre: Soil moisture increase per litre of water applied.
+        moisture_per_litre: Soil moisture % increase per litre applied.
+            Default 0.1 matches a 3m² zone with 0.3m root depth at 90% efficiency.
+            Formula: (efficiency / (area_m2 × root_depth_m × 1000)) × 100
     """
 
     def __init__(
         self,
         soil_sensor: object | None = None,
-        moisture_per_litre: float = 1.5,
+        moisture_per_litre: float = 0.1,
     ) -> None:
         self.soil_sensor = soil_sensor
         self.moisture_per_litre = moisture_per_litre
@@ -46,25 +41,20 @@ class SimulatedActuator(ActuatorInterface):
         self.total_water_used_litres: float = 0.0
 
     def execute(self, command: IrrigationCommand) -> None:
-        duration = command.effective_duration_seconds
-        if duration <= 0:
+        if command.water_litres <= 0.0:
             return
 
-        water = command.water_used_litres
         self._active = True
         self.history.append(
             IrrigationEvent(
                 timestamp=datetime.now(),
-                command=command,
-                total_water_litres=water,
+                water_litres=command.water_litres,
             )
         )
-        self.total_water_used_litres += water
+        self.total_water_used_litres += command.water_litres
 
-        # Update the linked soil moisture sensor if provided.
         if self.soil_sensor is not None and hasattr(self.soil_sensor, "irrigate"):
-            moisture_increase = water * self.moisture_per_litre
-            self.soil_sensor.irrigate(moisture_increase)
+            self.soil_sensor.irrigate(command.water_litres * self.moisture_per_litre)
 
         self._active = False
 
@@ -76,10 +66,10 @@ class SimulatedActuator(ActuatorInterface):
         return self._active
 
     def irrigation_count(self) -> int:
-        """Return the total number of irrigation events."""
+        """Total number of irrigation events recorded."""
         return len(self.history)
 
     def reset(self) -> None:
-        """Reset the recorded history and water usage counter."""
+        """Reset recorded history and water usage counter."""
         self.history.clear()
         self.total_water_used_litres = 0.0

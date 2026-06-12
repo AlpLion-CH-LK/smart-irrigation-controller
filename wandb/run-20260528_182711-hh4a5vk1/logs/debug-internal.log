@@ -1,0 +1,35 @@
+{"time":"2026-05-28T18:27:11.684131881+05:30","level":"INFO","msg":"wandb-core"}
+{"time":"2026-05-28T18:27:11.686212424+05:30","level":"INFO","msg":"stream: starting","core version":"0.27.0"}
+{"time":"2026-05-28T18:27:13.709449875+05:30","level":"INFO","msg":"stream: created new stream","id":"hh4a5vk1"}
+{"time":"2026-05-28T18:27:13.70959901+05:30","level":"INFO","msg":"handler: started"}
+{"time":"2026-05-28T18:27:13.709776118+05:30","level":"INFO","msg":"stream: started"}
+{"time":"2026-05-28T18:27:13.71042409+05:30","level":"INFO","msg":"sender: started"}
+{"time":"2026-05-28T18:27:13.71042091+05:30","level":"INFO","msg":"writer: started","stream_id":"hh4a5vk1"}
+{"time":"2026-05-28T18:27:14.523029871+05:30","level":"INFO","msg":"filestream: sending request","total_files":1,"console_offset":0,"console_lines":1}
+{"time":"2026-05-28T18:27:15.02913476+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-28T18:27:26.903119359+05:30","level":"INFO","msg":"tensorboard: tracking new log directory","rootDir":{},"logDir":"LocalOrCloudPath(LocalPath=\"/home/nathiskar/smart-irrigation-controller/models/logs/PPO_1\")","namespace":""}
+{"time":"2026-05-28T18:27:26.90312524+05:30","level":"INFO","msg":"tensorboard: tracking new log directory","rootDir":{},"logDir":"LocalOrCloudPath(LocalPath=\"/home/nathiskar/smart-irrigation-controller/models/logs/PPO_1\")","namespace":""}
+{"time":"2026-05-28T18:27:26.906973377+05:30","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/nathiskar/smart-irrigation-controller/models/logs/PPO_1/events.out.tfevents.1779973037.nathiskar-Dell-G15-5511.55348.0","runPath":"events.out.tfevents.1779973037.nathiskar-Dell-G15-5511.55348.0"}
+{"time":"2026-05-28T18:27:26.907126671+05:30","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/nathiskar/smart-irrigation-controller/models/logs/PPO_1/events.out.tfevents.1779973037.nathiskar-Dell-G15-5511.55348.0","runPath":"events.out.tfevents.1779973037.nathiskar-Dell-G15-5511.55348.0"}
+{"time":"2026-05-28T18:27:26.907156718+05:30","level":"ERROR","msg":"tensorboard: error creating symlink","target":"/home/nathiskar/smart-irrigation-controller/models/logs/PPO_1/events.out.tfevents.1779973037.nathiskar-Dell-G15-5511.55348.0","symlink":"/home/nathiskar/smart-irrigation-controller/wandb/run-20260528_182711-hh4a5vk1/files/events.out.tfevents.1779973037.nathiskar-Dell-G15-5511.55348.0","error":"symlink /home/nathiskar/smart-irrigation-controller/models/logs/PPO_1/events.out.tfevents.1779973037.nathiskar-Dell-G15-5511.55348.0 /home/nathiskar/smart-irrigation-controller/wandb/run-20260528_182711-hh4a5vk1/files/events.out.tfevents.1779973037.nathiskar-Dell-G15-5511.55348.0: file exists"}
+{"time":"2026-05-28T18:27:26.909367631+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":1178}
+{"time":"2026-05-28T18:27:26.914742898+05:30","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/nathiskar/smart-irrigation-controller/models/logs/PPO_1/events.out.tfevents.1779973046.nathiskar-Dell-G15-5511.55348.1","runPath":"events.out.tfevents.1779973046.nathiskar-Dell-G15-5511.55348.1"}
+{"time":"2026-05-28T18:27:26.915004237+05:30","level":"INFO","msg":"tensorboard: saving file","fileLocation":"/home/nathiskar/smart-irrigation-controller/models/logs/PPO_1/events.out.tfevents.1779973046.nathiskar-Dell-G15-5511.55348.1","runPath":"events.out.tfevents.1779973046.nathiskar-Dell-G15-5511.55348.1"}
+{"time":"2026-05-28T18:27:26.915136448+05:30","level":"ERROR","msg":"tensorboard: error creating symlink","target":"/home/nathiskar/smart-irrigation-controller/models/logs/PPO_1/events.out.tfevents.1779973046.nathiskar-Dell-G15-5511.55348.1","symlink":"/home/nathiskar/smart-irrigation-controller/wandb/run-20260528_182711-hh4a5vk1/files/events.out.tfevents.1779973046.nathiskar-Dell-G15-5511.55348.1","error":"symlink /home/nathiskar/smart-irrigation-controller/models/logs/PPO_1/events.out.tfevents.1779973046.nathiskar-Dell-G15-5511.55348.1 /home/nathiskar/smart-irrigation-controller/wandb/run-20260528_182711-hh4a5vk1/files/events.out.tfevents.1779973046.nathiskar-Dell-G15-5511.55348.1: file exists"}
+{"time":"2026-05-28T18:27:26.926946371+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":1353}
+{"time":"2026-05-28T18:27:29.534256846+05:30","level":"INFO","msg":"filestream: sending request","total_files":4,"history_offset":0,"history_lines":482,"events_offset":0,"events_lines":2,"console_offset":1,"console_lines":1738,"uploaded_len":2}
+{"time":"2026-05-28T18:27:30.668285938+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-28T18:27:31.91660526+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":3756}
+{"time":"2026-05-28T18:27:31.91675258+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":6}
+{"time":"2026-05-28T18:27:31.916993637+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":3841}
+{"time":"2026-05-28T18:27:31.929763887+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":1526}
+{"time":"2026-05-28T18:27:33.757504001+05:30","level":"INFO","msg":"flowcontrol: backed up, offloading to disk","recordNumber":5856}
+{"time":"2026-05-28T18:27:33.760397574+05:30","level":"INFO","msg":"flowcontrol: unblocked","totalOffloaded":296}
+{"time":"2026-05-28T18:27:35.766084599+05:30","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-05-28T18:27:35.76912977+05:30","level":"INFO","msg":"filestream: sending request","total_files":3,"history_offset":482,"history_lines":698,"console_offset":1739,"console_lines":777,"uploaded_len":5,"complete":true,"exit_code":0}
+{"time":"2026-05-28T18:27:36.654684291+05:30","level":"INFO","msg":"filestream: request sent","status":"200 OK"}
+{"time":"2026-05-28T18:27:36.657225546+05:30","level":"INFO","msg":"handler: operation stats","stats":{}}
+{"time":"2026-05-28T18:27:36.663854319+05:30","level":"INFO","msg":"stream: finishing up"}
+{"time":"2026-05-28T18:27:36.663859485+05:30","level":"INFO","msg":"handler: closed"}
+{"time":"2026-05-28T18:27:36.663883214+05:30","level":"INFO","msg":"sender: closed"}
+{"time":"2026-05-28T18:27:36.663886037+05:30","level":"INFO","msg":"stream: all finished"}
