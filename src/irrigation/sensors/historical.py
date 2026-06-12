@@ -1,19 +1,17 @@
 """Historical weather sensor using real NASA POWER Jaffna data.
 
-Phase 1 — Yala only (Jan/Feb/Mar start, fixed year, sequential months)
-    Agent learns basic irrigation in dry, predictable conditions.
+Each episode replays a real, contiguous slice of the 20-year hourly record —
+not an independent random sample per hour — so weather has realistic
+day-to-day persistence (gradual drying trends, multi-day rain events, real
+diurnal cycles).
 
-Phase 2 — Maha only (Aug/Sep start, fixed year, sequential months)
-    Agent learns to handle Northeast monsoon and reduce irrigation.
+Curriculum phases control which calendar months an episode's start hour may
+fall in (the rest of the episode just walks forward through real history from
+that point):
 
-Phase 3 — Both seasons (random Yala or Maha start, random year per month)
-    Agent generalises to maximum weather variability.
-
-Sequential month flow:
-    Phase 1 & 2: episode fixes one year, months advance sequentially
-                 Feb(2005) → Mar(2005) → Apr(2005) → May(2005) ...
-    Phase 3:     months advance sequentially, year picked randomly each month
-                 Feb(2005) → Mar(2011) → Apr(2003) → May(2018) ...
+    Phase 1 — Yala season (Jan/Feb/Mar start) — dry conditions
+    Phase 2 — Maha season (Aug/Sep start) — Northeast monsoon conditions
+    Phase 3 — Any start month — maximum variability
 
 ET₀ → soil drain rate conversion:
     Moisture %/hr = ET₀_mm / (root_depth_m × 10)
@@ -21,34 +19,22 @@ ET₀ → soil drain rate conversion:
 
 from __future__ import annotations
 
-import random
-
 from irrigation.sensors.base import SensorInterface, SensorReading
 from irrigation.sensors.simulation import SimulatedSoilMoistureSensor
-from irrigation.weather.weather_data import WeatherDataLoader
+from irrigation.weather.weather_data import MAHA_MONTHS, YALA_MONTHS, WeatherDataLoader
 from irrigation.zone_config import ZoneConfig
-
-# Approximate days per month — used to know when to advance to next month
-_MONTH_DAYS = {
-    1: 31, 2: 28, 3: 31, 4: 30,  5: 31, 6: 30,
-    7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31,
-}
-
-# Yala planting window: Jan, Feb, Mar (dry season)
-_YALA_START_MONTHS = [1, 2, 3]
-
-# Maha planting window: Aug, Sep (Northeast monsoon season)
-_MAHA_START_MONTHS = [8, 9]
 
 
 class HistoricalWeatherSensor(SensorInterface):
-    """Season-aware sensor backed by 20 years of NASA POWER hourly records.
+    """Season-aware sensor backed by a continuous real-history replay.
 
     Args:
         loader:          WeatherDataLoader with the hourly CSV loaded.
         soil_sensor:     SimulatedSoilMoistureSensor to update each step.
         zone:            ZoneConfig for ET₀ → moisture conversion.
-        training_phase:  1 = Yala only, 2 = Maha only, 3 = both seasons.
+        training_phase:  1 = Yala start, 2 = Maha start, 3 = any start month.
+        episode_hours:   Number of steps in one episode (used to pick a valid
+                         start index that doesn't run past the end of history).
     """
 
     def __init__(
@@ -57,77 +43,42 @@ class HistoricalWeatherSensor(SensorInterface):
         soil_sensor: SimulatedSoilMoistureSensor,
         zone: ZoneConfig,
         training_phase: int = 1,
+        episode_hours: int = 3600,
     ) -> None:
         self.loader         = loader
         self.soil_sensor    = soil_sensor
         self.zone           = zone
         self.training_phase = training_phase
+        self.episode_hours  = episode_hours
 
-        self._simulated_hour: float = 6.0
-        self._current_month: int    = 2
-        self._current_year: int     = 2010
-        self._episode_year: int     = 2010
-        self._hours_in_month: int   = 0
-
-        self._rng = random.Random()
+        self._index: int = 0
 
     def set_training_phase(self, phase: int) -> None:
         """Switch curriculum phase — takes effect on next reset()."""
         self.training_phase = phase
 
-    def _pick_start(self) -> tuple[int, int]:
-        """Pick (start_month, year) based on current training phase."""
+    def _allowed_start_months(self) -> list[int] | None:
         if self.training_phase == 1:
-            month = self._rng.choice(_YALA_START_MONTHS)
-        elif self.training_phase == 2:
-            month = self._rng.choice(_MAHA_START_MONTHS)
-        else:
-            season = self._rng.choice(["yala", "maha"])
-            month  = self._rng.choice(
-                _YALA_START_MONTHS if season == "yala" else _MAHA_START_MONTHS
-            )
-        year = self._rng.choice(self.loader.get_years_for_month(month))
-        return month, year
+            return YALA_MONTHS
+        if self.training_phase == 2:
+            return MAHA_MONTHS
+        return None
 
     def reset(
         self,
         initial_moisture_pct: float = 50.0,
         initial_hour: float = 6.0,
     ) -> None:
-        """Reset for a new episode — picks new season start and year."""
-        self._simulated_hour  = initial_hour
-        self._hours_in_month  = 0
-
-        self._current_month, self._episode_year = self._pick_start()
-        self._current_year = self._episode_year
-
+        """Reset for a new episode — picks a new random real-history start point."""
+        self._index = self.loader.random_start_index(
+            episode_hours=self.episode_hours,
+            allowed_months=self._allowed_start_months(),
+        )
         self.soil_sensor.reset(initial_moisture_pct, initial_hour)
 
-    def _advance_month_if_needed(self) -> None:
-        """Move to next sequential month when current month's hours are exhausted."""
-        limit = _MONTH_DAYS.get(self._current_month, 30) * 24
-        if self._hours_in_month >= limit:
-            self._current_month  = (self._current_month % 12) + 1
-            self._hours_in_month = 0
-
-            if self.training_phase == 3:
-                # Phase 3: new random year for each new month
-                self._current_year = self._rng.choice(
-                    self.loader.get_years_for_month(self._current_month)
-                )
-            # Phase 1 & 2: keep the fixed episode year throughout
-
     def read(self) -> SensorReading:
-        """Sample real weather for current sequential month, update soil, return reading."""
-        hour = int(self._simulated_hour % 24)
-
-        self._advance_month_if_needed()
-
-        record = self.loader.sample_for_year(
-            hour=hour,
-            month=self._current_month,
-            year=self._current_year,
-        )
+        """Advance one step through the real-history replay, update soil, return reading."""
+        record = self.loader.record_at(self._index)
 
         # Convert ET₀ (mm/hr) → soil moisture drain rate (%/hr)
         et_rate = record.et0_mm / (self.zone.root_depth_m * 10)
@@ -138,8 +89,7 @@ class HistoricalWeatherSensor(SensorInterface):
 
         soil = self.soil_sensor.read()
 
-        self._simulated_hour  += 1.0
-        self._hours_in_month  += 1
+        self._index += 1
 
         return SensorReading(
             timestamp=soil.timestamp,

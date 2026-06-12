@@ -71,6 +71,7 @@ class IrrigationGymEnv(gymnasium.Env):
         step_hours: float = 1.0,
         training_phase: int = 1,
         weather_csv: str | Path | None = None,
+        death_warmup_steps: int = 0,
     ) -> None:
         super().__init__()
 
@@ -80,6 +81,11 @@ class IrrigationGymEnv(gymnasium.Env):
         self.training_phase = training_phase
         self._steps_per_day = int(24 / step_hours)
         self._max_steps     = self.crop.growing_season_days * self._steps_per_day
+
+        # Death-disabled warm-up — see config.yaml training.death_warmup_steps.
+        # Counts total steps taken by this env instance (not reset per episode).
+        self.death_warmup_steps = death_warmup_steps
+        self._total_steps       = 0
 
         # Continuous action: fraction of max irrigation volume.
         self.action_space = spaces.Box(low=0.0, high=1.0, shape=(1,), dtype=np.float32)
@@ -104,6 +110,7 @@ class IrrigationGymEnv(gymnasium.Env):
             soil_sensor=self._soil_sensor,
             zone=self.zone,
             training_phase=training_phase,
+            episode_hours=self._max_steps,
         )
 
         self._actuator = SimulatedActuator(
@@ -145,8 +152,10 @@ class IrrigationGymEnv(gymnasium.Env):
         # Update curriculum phase in the sensor (controls month filter)
         self._sensor.set_training_phase(self.training_phase)
 
-        # Randomize initial soil moisture for diverse training scenarios
-        initial_moisture = float(self.np_random.uniform(40.0, 80.0))
+        # Randomize initial soil moisture for diverse training scenarios.
+        # Narrowed from (40, 80) — that range placed many episodes right at a
+        # Stage-0 death boundary before the policy had learned anything.
+        initial_moisture = float(self.np_random.uniform(50.0, 65.0))
         self._sensor.reset(initial_moisture_pct=initial_moisture, initial_hour=6.0)
         self._actuator.reset()
 
@@ -194,13 +203,19 @@ class IrrigationGymEnv(gymnasium.Env):
             water_litres=water_litres,
         )
 
-        # Apply death penalty and terminate if plant died.
-        plant_dead = self._vitality_tracker.is_dead
+        # Apply death penalty if plant died. During the death-disabled
+        # warm-up, the episode continues (vitality resets) so the agent can
+        # keep experiencing later growth stages while still close to random.
+        self._total_steps += 1
+        plant_dead   = self._vitality_tracker.is_dead
+        death_active = self._total_steps > self.death_warmup_steps
         if plant_dead:
             reward += self._vitality_tracker.death_penalty
+            if not death_active:
+                self._vitality_tracker.reset()
 
         obs        = self._make_obs(next_state)
-        terminated = self._step >= self._max_steps or plant_dead
+        terminated = self._step >= self._max_steps or (plant_dead and death_active)
 
         info = {
             "day":            next_state.current_day,

@@ -123,7 +123,8 @@ def train(
     # ------------------------------------------------------------------
     print("\n[PHASE 1] Yala season — dry conditions, Jan/Feb/Mar planting...")
 
-    phase1_kwargs = {"zone": zone, "training_phase": 1}
+    death_warmup_steps = _train["death_warmup_steps"]
+    phase1_kwargs = {"zone": zone, "training_phase": 1, "death_warmup_steps": death_warmup_steps}
     train_env_p1 = make_vec_env(IrrigationGymEnv, n_envs=n_envs, env_kwargs=phase1_kwargs)
     eval_env_p1  = make_vec_env(IrrigationGymEnv, n_envs=1,      env_kwargs=phase1_kwargs)
 
